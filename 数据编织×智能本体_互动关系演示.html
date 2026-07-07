@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数据编织 × 智能本体 — 互动关系演示</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blue: #3b82f6;
+    --blue-light: #eff6ff;
+    --blue-dark: #1e40af;
+    --purple: #8b5cf6;
+    --purple-light: #f5f3ff;
+    --purple-dark: #5b21b6;
+    --teal: #14b8a6;
+    --teal-light: #f0fdfa;
+    --amber: #f59e0b;
+    --green: #10b981;
+    --gray-50: #f9fafb;
+    --gray-100: #f3f4f6;
+    --gray-200: #e5e7eb;
+    --gray-300: #d1d5db;
+    --gray-500: #6b7280;
+    --gray-700: #374151;
+    --gray-900: #111827;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+    background: linear-gradient(135deg, #f0f4ff 0%, #fdf2f8 50%, #f0fdfa 100%);
+    min-height: 100vh;
+    color: var(--gray-900);
+  }
+
+  /* ===== Header ===== */
+  header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    position: relative;
+  }
+  header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  header p {
+    color: var(--gray-500);
+    margin-top: 6px;
+    font-size: 0.95rem;
+  }
+
+  /* ===== Main Layout ===== */
+  .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
+
+  /* ===== Interactive Diagram ===== */
+  .diagram-section {
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    padding: 40px 30px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 8px 32px rgba(0,0,0,0.04);
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .diagram-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at 30% 40%, rgba(59,130,246,0.04) 0%, transparent 50%),
+                radial-gradient(circle at 70% 60%, rgba(139,92,246,0.04) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .diagram-canvas {
+    position: relative;
+    width: 100%;
+    height: 520px;
+    z-index: 1;
+  }
+
+  /* ===== Nodes ===== */
+  .node {
+    position: absolute;
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    user-select: none;
+    z-index: 5;
+  }
+  .node:hover { transform: scale(1.05); z-index: 10; }
+  .node.active { transform: scale(1.08); z-index: 10; }
+
+  .node-datafabric {
+    left: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 240px;
+    background: linear-gradient(145deg, var(--blue-light), #dbeafe);
+    border: 2px solid var(--blue);
+    box-shadow: 0 4px 20px rgba(59,130,246,0.15);
+  }
+  .node-datafabric:hover,
+  .node-datafabric.active { box-shadow: 0 8px 32px rgba(59,130,246,0.3); }
+
+  .node-ontology {
+    right: 8%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 240px;
+    background: linear-gradient(145deg, var(--purple-light), #ede9fe);
+    border: 2px solid var(--purple);
+    box-shadow: 0 4px 20px rgba(139,92,246,0.15);
+  }
+  .node-ontology:hover,
+  .node-ontology.active { box-shadow: 0 8px 32px rgba(139,92,246,0.3); }
+
+  .node-label {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .node-datafabric .node-label { color: var(--blue-dark); }
+  .node-ontology .node-label { color: var(--purple-dark); }
+
+  .node-desc {
+    font-size: 0.82rem;
+    color: var(--gray-500);
+    line-height: 1.5;
+  }
+
+  .node-badge {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-top: 8px;
+    font-weight: 600;
+  }
+  .node-datafabric .node-badge {
+    background: rgba(59,130,246,0.12);
+    color: var(--blue-dark);
+  }
+  .node-ontology .node-badge {
+    background: rgba(139,92,246,0.12);
+    color: var(--purple-dark);
+  }
+
+  .node-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    font-size: 1rem;
+  }
+  .node-datafabric .node-icon { background: rgba(59,130,246,0.15); }
+  .node-ontology .node-icon { background: rgba(139,92,246,0.15); }
+
+  /* ===== Relationship Lines (SVG) ===== */
+  .connections-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+  }
+  .connections-svg path {
+    stroke-width: 2.5;
+    fill: none;
+    stroke-linecap: round;
+  }
+  .connections-svg .line-active { stroke-width: 3; }
+
+  /* ===== Labels on lines ===== */
+  .line-label {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+    z-index: 6;
+    pointer-events: none;
+    transition: all 0.5s ease;
+    opacity: 0.9;
+  }
+  .line-label.l1 { background: #dbeafe; color: var(--blue-dark); border: 1px solid #93c5fd; }
+  .line-label.l2 { background: #ede9fe; color: var(--purple-dark); border: 1px solid #c4b5fd; }
+  .line-label.l3 { background: #ccfbf1; color: #0f766e; border: 1px solid #5eead4; }
+
+  /* ===== Bottom cards ===== */
+  .cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 0;
+  }
+  @media (max-width: 900px) { .cards-row { grid-template-columns: 1fr; } }
+
+  .info-card {
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(8px);
+    border-radius: 16px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(0,0,0,0.04);
+    cursor: pointer;
+  }
+  .info-card:hover {
+    background: rgba(255,255,255,0.95);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+  }
+  .info-card.active-card {
+    box-shadow: 0 0 0 2px var(--teal), 0 8px 24px rgba(20,184,166,0.12);
+  }
+
+  .info-card .icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    margin-bottom: 12px;
+  }
+  .info-card:nth-child(1) .icon { background: var(--blue-light); }
+  .info-card:nth-child(2) .icon { background: var(--purple-light); }
+  .info-card:nth-child(3) .icon { background: var(--teal-light); }
+
+  .info-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .info-card p {
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    line-height: 1.6;
+  }
+  .info-card ul {
+    list-style: none;
+    padding: 0;
+    margin-top: 10px;
+  }
+  .info-card li {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+  }
+  .info-card li::before {
+    content: '•';
+    position: absolute;
+    left: 2px;
+    color: var(--teal);
+  }
+
+  /* ===== Detail Panel ===== */
+  .detail-panel {
+    display: none;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 28px 30px;
+    margin-top: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,0.04);
+    animation: slideUp 0.4s ease;
+  }
+  .detail-panel.show { display: block; }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .detail-panel h2 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .detail-panel .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 700px) { .detail-panel .grid-2 { grid-template-columns: 1fr; } }
+  .detail-panel .col {
+    background: var(--gray-50);
+    border-radius: 12px;
+    padding: 16px;
+  }
+  .detail-panel .col h4 {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--gray-700);
+  }
+  .detail-panel .col p, .detail-panel .col li {
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    line-height: 1.6;
+  }
+  .detail-panel .col ul { padding-left: 16px; margin-top: 4px; }
+  .detail-panel .col li { margin-bottom: 4px; }
+
+  .detail-panel .tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    margin-right: 4px;
+    margin-bottom: 4px;
+  }
+  .detail-panel .tag.blue { background: #dbeafe; color: var(--blue-dark); }
+  .detail-panel .tag.purple { background: #ede9fe; color: var(--purple-dark); }
+  .detail-panel .tag.teal { background: #ccfbf1; color: #0f766e; }
+  .detail-panel .tag.amber { background: #fef3c7; color: #92400e; }
+
+  .close-btn {
+    float: right;
+    background: none;
+    border: none;
+    font-size: 1.4rem;
+    color: var(--gray-500);
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+  }
+  .close-btn:hover { color: var(--gray-900); }
+
+  /* ===== Animation dots ===== */
+  .particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    z-index: 3;
+    pointer-events: none;
+    opacity: 0;
+  }
+  .particle.blue { background: var(--blue); }
+  .particle.purple { background: var(--purple); }
+  .particle.teal { background: var(--teal); }
+
+  /* ===== Floating Controls ===== */
+  .controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .controls button {
+    padding: 8px 20px;
+    border: none;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: rgba(255,255,255,0.7);
+    color: var(--gray-700);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  }
+  .controls button:hover {
+    background: rgba(255,255,255,0.95);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  .controls button.primary {
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    color: white;
+  }
+  .controls button.primary:hover {
+    box-shadow: 0 4px 16px rgba(99,102,241,0.3);
+  }
+
+  /* ===== Scenario Showcase ===== */
+  .scenario-section {
+    margin-top: 30px;
+  }
+  .scenario-section h2 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 14px;
+    color: var(--gray-700);
+  }
+  .scenario-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  @media (max-width: 700px) { .scenario-grid { grid-template-columns: 1fr; } }
+  .scenario-card {
+    background: rgba(255,255,255,0.7);
+    backdrop-filter: blur(8px);
+    border-radius: 14px;
+    padding: 16px 18px;
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .scenario-card:hover {
+    background: rgba(255,255,255,0.9);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  }
+  .scenario-card .sc-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+  .scenario-card .sc-desc {
+    font-size: 0.8rem;
+    color: var(--gray-500);
+    line-height: 1.5;
+  }
+  .scenario-card .sc-tags {
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🏛️ 数据编织 × 智能本体</h1>
+  <p>骨架与灵魂 — 从数据到知识的完整闭环</p>
+</header>
+
+<div class="container">
+
+  <!-- Controls -->
+  <div class="controls">
+    <button class="primary" onclick="resetAll()">⟳ 重置视角</button>
+    <button onclick="toggleAnimation()">▶ 播放动画</button>
+    <button onclick="showScenario('gov')">🏛 政府数据治理</button>
+    <button onclick="showScenario('enterprise')">🏢 企业数据中台</button>
+  </div>
+
+  <!-- Diagram -->
+  <div class="diagram-section" id="diagramSection">
+    <div class="diagram-canvas" id="diagramCanvas">
+
+      <!-- Data Fabric Node -->
+      <div class="node node-datafabric" id="nodeDataFabric" onclick="highlightRelation('datafabric')">
+        <div class="node-label">
+          <span class="node-icon">🌐</span>
+          数据编织 · Data Fabric
+        </div>
+        <div class="node-desc">统一数据访问层，打通异构数据源</div>
+        <div class="node-badge">🏗 骨架 / 管道</div>
+      </div>
+
+      <!-- Ontology Node -->
+      <div class="node node-ontology" id="nodeOntology" onclick="highlightRelation('ontology')">
+        <div class="node-label">
+          <span class="node-icon">🧠</span>
+          智能本体 · Intelligent Ontology
+        </div>
+        <div class="node-desc">领域知识体系，语义理解与推理</div>
+        <div class="node-badge">🧠 大脑 / 语义层</div>
+      </div>
+
+      <!-- SVG Connections -->
+      <svg class="connections-svg" id="connectionsSvg">
+        <!-- Middle arc: 数据编织 → 智能本体 (provides data) -->
+        <path id="lineFabricToOnto" d="M 0 0" stroke="#3b82f6" stroke-dasharray="6 4" opacity="0.5"/>
+        <!-- Middle arc: 智能本体 → 数据编织 (provides semantics) -->
+        <path id="lineOntoToFabric" d="M 0 0" stroke="#8b5cf6" stroke-dasharray="6 4" opacity="0.5"/>
+        <!-- Bottom arc: fusion -->
+        <path id="lineFusion" d="M 0 0" stroke="#14b8a6" stroke-width="3" opacity="0.7"/>
+      </svg>
+
+      <!-- Line Labels -->
+      <div class="line-label l1" id="label1">提供数据管道 · 查询路由</div>
+      <div class="line-label l2" id="label2">注入语义理解 · 数据关系</div>
+      <div class="line-label l3" id="label3">⟡ 融合 = 智能数据服务</div>
+
+    </div>
+  </div>
+
+  <!-- Detail Panel -->
+  <div class="detail-panel" id="detailPanel">
+    <button class="close-btn" onclick="closeDetail()">✕</button>
+    <div id="detailContent"></div>
+  </div>
+
+  <!-- Bottom Cards -->
+  <div class="cards-row">
+    <div class="info-card" onclick="showDetail('fabric')">
+      <div class="icon">🌐</div>
+      <h3>数据编织（骨架）</h3>
+      <p>数据虚拟化 · 异构集成 · 实时查询路由 · 元数据驱动</p>
+      <ul>
+        <li>打通数据库、数据湖、API、云上云下</li>
+        <li>不物理移动数据，逻辑统一访问</li>
+        <li>支持跨源实时查询</li>
+      </ul>
+    </div>
+    <div class="info-card" onclick="showDetail('onto')">
+      <div class="icon">🧠</div>
+      <h3>智能本体（灵魂）</h3>
+      <p>概念体系 · 语义关系 · 推理规则 · AI动态构建</p>
+      <ul>
+        <li>定义领域概念与关系</li>
+        <li>支持机器推理与知识发现</li>
+        <li>AI自动学习、演进本体</li>
+      </ul>
+    </div>
+    <div class="info-card" onclick="showDetail('fusion')">
+      <div class="icon">⚡</div>
+      <h3>融合应用（闭环）</h3>
+      <p>智能数据目录 · 语义搜索 · 自动血缘 · 知识图谱</p>
+      <ul>
+        <li>数据编织提供"路网"，本体提供"导航"</li>
+        <li>数据→信息→知识→决策 自动化</li>
+        <li>驱动上层智能应用</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Scenario Showcase -->
+  <div class="scenario-section">
+    <h2>📌 典型应用场景</h2>
+    <div class="scenario-grid">
+      <div class="scenario-card" onclick="showScenario('gov')">
+        <div class="sc-title">🏛 政府数据治理</div>
+        <div class="sc-desc">编织各委办局异构系统，本体驱动"一网通办"数据目录，实现跨部门语义级数据共享</div>
+        <div class="sc-tags"><span class="tag blue">数据编织</span><span class="tag purple">智能本体</span></div>
+      </div>
+      <div class="scenario-card" onclick="showScenario('enterprise')">
+        <div class="sc-title">🏢 企业数据中台</div>
+        <div class="sc-desc">连通ERP/CRM/SCM系统，业务本体统一语义，自助取数与智能报表</div>
+        <div class="sc-tags"><span class="tag blue">数据编织</span><span class="tag purple">智能本体</span></div>
+      </div>
+      <div class="scenario-card" onclick="showScenario('health')">
+        <div class="sc-title">🏥 医疗健康数据平台</div>
+        <div class="sc-desc">编织HIS/LIS/PACS数据，医学本体辅助临床决策与科研</div>
+        <div class="sc-tags"><span class="tag blue">数据编织</span><span class="tag purple">智能本体</span></div>
+      </div>
+      <div class="scenario-card" onclick="showScenario('finance')">
+        <div class="sc-title">💰 金融风控</div>
+        <div class="sc-desc">多源异构数据实时编织，风控本体驱动规则推理与异常检测</div>
+        <div class="sc-tags"><span class="tag blue">数据编织</span><span class="tag purple">智能本体</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // ===== DOM refs =====
+  const canvas = document.getElementById('diagramCanvas');
+  const nodeFabric = document.getElementById('nodeDataFabric');
+  const nodeOnto = document.getElementById('nodeOntology');
+  const svg = document.getElementById('connectionsSvg');
+  const lineF2O = document.getElementById('lineFabricToOnto');
+  const lineO2F = document.getElementById('lineOntoToFabric');
+  const lineFusion = document.getElementById('lineFusion');
+  const label1 = document.getElementById('label1');
+  const label2 = document.getElementById('label2');
+  const label3 = document.getElementById('label3');
+  const panel = document.getElementById('detailPanel');
+  const detailContent = document.getElementById('detailContent');
+
+  let animRunning = false;
+  let animTimer = null;
+  let particleInterval = null;
+
+  // ===== Position lines =====
+  function updateLines() {
+    const rect = canvas.getBoundingClientRect();
+    const cw = rect.width;
+    const ch = rect.height;
+
+    const nf = nodeFabric.getBoundingClientRect();
+    const no = nodeOnto.getBoundingClientRect();
+
+    const nf_cx = nf.left - rect.left + nf.width/2;
+    const nf_cy = nf.top - rect.left + nf.height/2;
+    const nf_r = nf.right - rect.left;
+    const nf_b = nf.top - rect.top + nf.height;
+
+    const no_l = no.left - rect.left;
+    const no_cy = no.top - rect.top + no.height/2;
+    const no_b = no.top - rect.top + no.height;
+
+    // 右侧出口 → 左侧入口 (Fabric → Onto)
+    const fx = nf_r, fy = nf_cy - 20;
+    const ox = no_l, oy = no_cy - 20;
+    const mx = (fx + ox) / 2;
+    lineF2O.setAttribute('d', `M ${fx} ${fy} C ${mx} ${fy-10}, ${mx} ${oy-10}, ${ox} ${oy}`);
+
+    // 右侧出口 → 左侧入口 (Onto → Fabric)
+    const fx2 = nf_r, fy2 = nf_cy + 10;
+    const ox2 = no_l, oy2 = no_cy + 10;
+    lineO2F.setAttribute('d', `M ${ox2} ${oy2} C ${mx} ${oy2+10}, ${mx} ${fy2+10}, ${fx2} ${fy2}`);
+
+    // Bottom fusion line
+    const fby = Math.max(nf_b, no_b) + 30;
+    const fbx1 = nf.left - rect.left + nf.width * 0.3;
+    const fbx2 = no.left - rect.left + no.width * 0.7;
+    const fbmx = (fbx1 + fbx2) / 2;
+    lineFusion.setAttribute('d', `M ${fbx1} ${fby} C ${fbmx} ${fby+20}, ${fbmx} ${fby-20}, ${fbx2} ${fby}`);
+
+    // Labels
+    label1.style.left = (fx + ox) / 2 + 'px';
+    label1.style.top = (fy + oy) / 2 - 18 + 'px';
+
+    label2.style.left = (fx2 + ox2) / 2 + 'px';
+    label2.style.top = (fy2 + oy2) / 2 + 16 + 'px';
+
+    label3.style.left = (fbx1 + fbx2) / 2 + 'px';
+    label3.style.top = (fby + 10) + 'px';
+  }
+
+  // ===== Particle animation =====
+  function startParticles() {
+    stopParticles();
+    const colors = ['blue', 'purple', 'teal'];
+    const paths = [
+      { from: nodeFabric, to: nodeOnto, color: 'blue' },
+      { from: nodeOnto, to: nodeFabric, color: 'purple' },
+      { from: nodeFabric, to: nodeOnto, color: 'teal', bottom: true },
+    ];
+
+    particleInterval = setInterval(() => {
+      paths.forEach(p => {
+        const pEl = document.createElement('div');
+        pEl.className = `particle ${p.color}`;
+        canvas.appendChild(pEl);
+
+        const rect = canvas.getBoundingClientRect();
+        const fRect = p.from.getBoundingClientRect();
+        const tRect = p.to.getBoundingClientRect();
+
+        let sx, sy, ex, ey;
+        if (p.bottom) {
+          sx = fRect.right - rect.left - 10;
+          sy = fRect.bottom - rect.top + 10;
+          ex = tRect.left - rect.left + 10;
+          ey = tRect.bottom - rect.top + 10;
+        } else {
+          sx = fRect.right - rect.left;
+          sy = fRect.top - rect.top + fRect.height/2 + (p.color === 'blue' ? -15 : 10);
+          ex = tRect.left - rect.left;
+          ey = tRect.top - rect.top + tRect.height/2 + (p.color === 'blue' ? -15 : 10);
+        }
+
+        pEl.style.left = sx + 'px';
+        pEl.style.top = sy + 'px';
+
+        const dx = ex - sx;
+        const dy = ey - sy;
+        const dist = Math.sqrt(dx*dx + dy*dy);
+        const duration = 800 + Math.random() * 600;
+
+        pEl.animate([
+          { transform: 'translate(0, 0)', opacity: 1, width: '8px', height: '8px' },
+          { transform: `translate(${dx}px, ${dy}px)`, opacity: 0.2, width: '4px', height: '4px' }
+        ], { duration, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' });
+
+        setTimeout(() => pEl.remove(), duration + 50);
+      });
+    }, 400);
+  }
+
+  function stopParticles() {
+    if (particleInterval) {
+      clearInterval(particleInterval);
+      particleInterval = null;
+    }
+    document.querySelectorAll('.particle').forEach(el => el.remove());
+  }
+
+  // ===== Interaction =====
+  function highlightRelation(type) {
+    closeDetail();
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('active'));
+
+    if (type === 'datafabric') {
+      nodeFabric.classList.add('active');
+      showDetail('fabric');
+    } else if (type === 'ontology') {
+      nodeOnto.classList.add('active');
+      showDetail('onto');
+    }
+  }
+
+  function showDetail(type) {
+    const contents = {
+      fabric: `
+        <h2>🌐 数据编织（Data Fabric）— 骨架</h2>
+        <div class="grid-2">
+          <div class="col">
+            <h4>核心能力</h4>
+            <ul>
+              <li><strong>数据虚拟化</strong> — 不物理搬迁，逻辑统一访问</li>
+              <li><strong>异构数据源集成</strong> — 数据库、数据湖、API、云上云下</li>
+              <li><strong>实时查询路由</strong> — 查询直达源系统</li>
+              <li><strong>元数据驱动</strong> — 自动化数据发现与分类</li>
+              <li><strong>数据编排</strong> — 工作流式数据处理</li>
+            </ul>
+          </div>
+          <div class="col">
+            <h4>典型技术栈</h4>
+            <p><span class="tag blue">Denodo</span><span class="tag blue">Talend</span><span class="tag blue">Apache Calcite</span><span class="tag blue">Informatica</span></p>
+            <h4 style="margin-top:12px;">产品形态</h4>
+            <p>数据虚拟化平台 · 数据中台 · 数据服务总线</p>
+            <h4 style="margin-top:12px;">类比</h4>
+            <p>🏗 城市的交通路网（道路、桥梁、隧道）— 保证数据能四通八达</p>
+          </div>
+        </div>
+      `,
+      onto: `
+        <h2>🧠 智能本体（Intelligent Ontology）— 灵魂</h2>
+        <div class="grid-2">
+          <div class="col">
+            <h4>核心能力</h4>
+            <ul>
+              <li><strong>概念体系定义</strong> — 类、属性、关系的形式化描述</li>
+              <li><strong>语义推理</strong> — 基于规则的知识发现与验证</li>
+              <li><strong>AI动态构建</strong> — NLP/ML自动学习并演化本体</li>
+              <li><strong>知识图谱</strong> — 实体关系网络可视化</li>
+              <li><strong>跨领域映射</strong> — 不同本体的对齐与融合</li>
+            </ul>
+          </div>
+          <div class="col">
+            <h4>典型技术栈</h4>
+            <p><span class="tag purple">OWL</span><span class="tag purple">RDF</span><span class="tag purple">Neo4j</span><span class="tag purple">Protégé</span><span class="tag purple">知识图谱</span></p>
+            <h4 style="margin-top:12px;">产品形态</h4>
+            <p>语义层引擎 · 知识图谱平台 · 智能数据目录</p>
+            <h4 style="margin-top:12px;">类比</h4>
+            <p>🧠 城市的地图和导航系统（POI标注、路况理解、路径规划）</p>
+          </div>
+        </div>
+      `,
+      fusion: `
+        <h2>⚡ 融合应用 — 从数据到知识的闭环</h2>
+        <div class="grid-2">
+          <div class="col">
+            <h4>协同工作方式</h4>
+            <ul>
+              <li><strong>数据编织</strong> 打通所有数据管道 → 数据可通达</li>
+              <li><strong>智能本体</strong> 注入语义理解 → 数据可理解</li>
+              <li>编织负责"怎么取数据"</li>
+              <li>本体负责"数据是什么、怎么用"</li>
+              <li>合体 → <strong>自动化数据服务</strong>（取→懂→用）</li>
+            </ul>
+          </div>
+          <div class="col">
+            <h4>上层应用示例</h4>
+            <ul>
+              <li>🔍 <strong>智能数据目录</strong> — 编织发现数据源，本体打标签</li>
+              <li>🧩 <strong>自动数据血缘</strong> — 编织追踪流向，本体解释含义</li>
+              <li>💬 <strong>自然语言查询</strong> — 本体翻译"利润"→ 编织跨系统查数</li>
+              <li>📊 <strong>智能报表</strong> — 本体定义指标，编织实时聚合</li>
+              <li>🚨 <strong>异常检测</strong> — 编织实时流处理，本体规则触发告警</li>
+            </ul>
+          </div>
+        </div>
+      `
+    };
+
+    detailContent.innerHTML = contents[type] || '';
+    panel.classList.add('show');
+    document.querySelectorAll('.info-card').forEach((c, i) => {
+      c.classList.toggle('active-card', (type === 'fabric' && i === 0) || (type === 'onto' && i === 1) || (type === 'fusion' && i === 2));
+    });
+  }
+
+  function closeDetail() {
+    panel.classList.remove('show');
+    document.querySelectorAll('.info-card').forEach(c => c.classList.remove('active-card'));
+    document.querySelectorAll('.node').forEach(n => n.classList.remove('active'));
+  }
+
+  function resetAll() {
+    closeDetail();
+    stopParticles();
+    animRunning = false;
+    if (animTimer) { clearTimeout(animTimer); animTimer = null; }
+    updateLines();
+    // flash effect
+    document.querySelectorAll('.connections-svg path').forEach(p => {
+      p.style.transition = 'stroke 0.4s, opacity 0.4s';
+      p.style.stroke = '#e5e7eb';
+      p.style.opacity = '0.3';
+      setTimeout(() => {
+        p.style.stroke = p.id === 'lineFabricToOnto' ? '#3b82f6' : p.id === 'lineOntoToFabric' ? '#8b5cf6' : '#14b8a6';
+        p.style.opacity = p.id === 'lineFusion' ? '0.7' : '0.5';
+      }, 400);
+      setTimeout(() => { p.style.transition = ''; }, 800);
+    });
+  }
+
+  function toggleAnimation() {
+    if (animRunning) {
+      stopParticles();
+      animRunning = false;
+      if (animTimer) { clearTimeout(animTimer); animTimer = null; }
+      document.querySelectorAll('.connections-svg path').forEach(p => {
+        p.style.animation = 'none';
+      });
+      return;
+    }
+    animRunning = true;
+    // Pulse lines
+    const paths = [lineF2O, lineO2F, lineFusion];
+    let idx = 0;
+    function pulse() {
+      if (!animRunning) return;
+      paths.forEach(p => { p.style.transition = 'stroke 0.6s, stroke-width 0.6s, opacity 0.6s'; });
+      // Reset
+      paths.forEach(p => { p.style.stroke = '#e5e7eb'; p.style.strokeWidth = '1'; p.style.opacity = '0.2'; });
+      // Highlight current
+      setTimeout(() => {
+        const p = paths[idx];
+        p.style.stroke = idx === 0 ? '#3b82f6' : idx === 1 ? '#8b5cf6' : '#14b8a6';
+        p.style.strokeWidth = idx === 2 ? '4' : '3';
+        p.style.opacity = '1';
+      }, 50);
+      idx = (idx + 1) % paths.length;
+      animTimer = setTimeout(pulse, 1500);
+    }
+    startParticles();
+    pulse();
+  }
+
+  function showScenario(scenario) {
+    closeDetail();
+    const scenarios = {
+      gov: {
+        title: '🏛 政府数据治理场景',
+        fabric: '编织各委办局异构系统（公安/民政/税务/卫健），实时打通数据孤岛，统一数据访问层',
+        onto: '构建"政务服务"领域本体，定义自然人→法人→事项→证照的语义关系，推理"一件事"联办路径',
+        app: '实现"一网通办"智能数据目录、跨部门数据共享责任清单、政策精准推送',
+        tags: '数据共享交换 · 一网通办 · 数据目录 · 跨域协同'
+      },
+      enterprise: {
+        title: '🏢 企业数据中台场景',
+        fabric: '连通ERP/CRM/SCM/HR多个业务系统，建立实时数据管道，统一数据服务出口',
+        onto: '构建企业业务本体，统一"客户→订单→产品→库存"语义模型，支持自助分析',
+        app: '实现智能报表自动生成、经营指标实时监控、自助式数据探索',
+        tags: '数据中台 · 自助BI · 经营分析 · 数据服务'
+      },
+      health: {
+        title: '🏥 医疗健康数据平台场景',
+        fabric: '编织HIS/LIS/PACS/EMR等多源异构医疗数据系统',
+        onto: '构建医学本体（ICD诊断映射、药品知识库、临床路径知识图谱）',
+        app: '辅助临床决策、科研数据自动归集、智能问诊推荐',
+        tags: '医疗数据 · 临床决策 · 科研 · 知识图谱'
+      },
+      finance: {
+        title: '💰 金融风控场景',
+        fabric: '实时编织交易系统、征信系统、外部黑名单等多源数据',
+        onto: '构建风控领域本体（欺诈规则图谱、关联关系推理、异常交易模式）',
+        app: '实现毫秒级风控决策、团伙欺诈关系发现、合规检查自动化',
+        tags: '实时风控 · 反欺诈 · 合规 · 异常检测'
+      }
+    };
+
+    const s = scenarios[scenario];
+    detailContent.innerHTML = `
+      <h2>${s.title}</h2>
+      <div class="grid-2">
+        <div class="col">
+          <h4>🌐 数据编织作用</h4>
+          <p>${s.fabric}</p>
+        </div>
+        <div class="col">
+          <h4>🧠 智能本体作用</h4>
+          <p>${s.onto}</p>
+        </div>
+      </div>
+      <div style="margin-top:14px;background:var(--teal-light);border-radius:12px;padding:14px 16px;">
+        <h4 style="font-size:0.9rem;font-weight:600;color:#0f766e;margin-bottom:6px;">⚡ 融合应用效果</h4>
+        <p style="font-size:0.85rem;color:var(--gray-500);line-height:1.6;">${s.app}</p>
+        <div style="margin-top:8px;">
+          ${s.tags.split(' · ').map(t => `<span class="tag teal">${t}</span>`).join('')}
+        </div>
+      </div>
+    `;
+    panel.classList.add('show');
+  }
+
+  // ===== Init =====
+  window.addEventListener('load', () => {
+    updateLines();
+    // Re-render on resize
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(updateLines, 100);
+    });
+    // Auto start animation
+    setTimeout(() => toggleAnimation(), 500);
+  });
+</script>
+
+</body>
+</html>

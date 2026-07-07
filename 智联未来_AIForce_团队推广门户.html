@@ -234,6 +234,16 @@
     font-size: 10px; color: var(--accent); margin-bottom: 8px; display: inline-block;
     padding: 2px 8px; border-radius: 4px; background: var(--accent-soft); font-weight: 500;
   }
+  .industry-card-img {
+    width: calc(100% + 56px); margin: -28px -28px 20px -28px;
+    height: 160px; overflow: hidden; background: var(--bg-secondary);
+    border-radius: 12px 12px 0 0;
+  }
+  .industry-card-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.4s;
+  }
+  .industry-card:hover .industry-card-img img { transform: scale(1.05); }
   .industry-card p { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
   .industry-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
   .industry-expand {
@@ -259,6 +269,16 @@
     border-radius: 12px; padding: 28px; transition: all 0.25s;
   }
   .case-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow); }
+  .case-card-img {
+    width: calc(100% + 56px); margin: -28px -28px 20px -28px;
+    height: 160px; overflow: hidden; background: var(--bg-secondary);
+    border-radius: 12px 12px 0 0;
+  }
+  .case-card-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.4s;
+  }
+  .case-card:hover .case-card-img img { transform: scale(1.05); }
   .case-card .case-cat {
     display: inline-block; padding: 2px 8px; border-radius: 4px;
     font-size: 11px; font-weight: 500; background: var(--accent-soft); color: var(--accent); margin-bottom: 10px;
@@ -454,7 +474,7 @@
         <div class="hero-stat"><div class="hero-stat-num">14+</div><div class="hero-stat-label">行业覆盖</div></div>
         <div class="hero-stat"><div class="hero-stat-num">20+</div><div class="hero-stat-label">落地案例</div></div>
         <div class="hero-stat"><div class="hero-stat-num">85%+</div><div class="hero-stat-label">客户续约率</div></div>
-        <div class="hero-stat"><div class="hero-stat-num">8-9人</div><div class="hero-stat-label">精锐团队</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">15人</div><div class="hero-stat-label">精锐团队</div></div>
       </div>
     </div>
   </section>
@@ -676,6 +696,32 @@ themeToggle.addEventListener('click', () => {
   themeToggle.textContent = next === 'light' ? '☀️' : '🌙';
 });
 
+// ===== Unsplash Image Maps =====
+const industryImgs = {
+  gov: 'https://images.unsplash.com/photo-1577083288073-40892c0860a4?w=400&h=200&fit=crop',
+  industry: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=200&fit=crop',
+  health: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=200&fit=crop',
+  finance: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=200&fit=crop',
+  consumer: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop',
+  edu: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&h=200&fit=crop',
+  logistics: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=200&fit=crop',
+  agri: 'https://images.unsplash.com/photo-1500651230702-0e8d188a5c3d?w=400&h=200&fit=crop',
+};
+const caseImgs = {
+  government: 'https://images.unsplash.com/photo-1577083288073-40892c0860a4?w=400&h=200&fit=crop',
+  manufacturing: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=200&fit=crop',
+  healthcare: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=200&fit=crop',
+  finance: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?w=400&h=200&fit=crop',
+  retail: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=400&h=200&fit=crop',
+  education: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=400&h=200&fit=crop',
+  logistics: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=400&h=200&fit=crop',
+  agri: 'https://images.unsplash.com/photo-1500651230702-0e8d188a5c3d?w=400&h=200&fit=crop',
+  entertainment: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?w=400&h=200&fit=crop',
+  realestate: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=200&fit=crop',
+  catering: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=200&fit=crop',
+  legal: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400&h=200&fit=crop',
+};
+
 // ===== Render Industry Categories =====
 const catContainer = document.getElementById('industryCategories');
 let activeIndustryCat = 'all';
@@ -701,7 +747,9 @@ industries.forEach(ind => {
   const card = document.createElement('div');
   card.className = 'industry-card';
   card.dataset.cat = ind.cat;
-  card.innerHTML = `<span class="industry-icon">${ind.icon}</span><span class="industry-cat-label">${categories.find(c => c.id === ind.cat)?.name || ''}</span><h3>${ind.name}</h3><p>${ind.desc}</p><div class="industry-tags">${ind.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div><div class="industry-expand">${ind.expand}</div>`;
+  const imgUrl = industryImgs[ind.cat] || '';
+  const imgHtml = imgUrl ? `<div class="industry-card-img"><img src="${imgUrl}" alt="${ind.name}" loading="lazy"></div>` : '';
+  card.innerHTML = `${imgHtml}<span class="industry-icon">${ind.icon}</span><span class="industry-cat-label">${categories.find(c => c.id === ind.cat)?.name || ''}</span><h3>${ind.name}</h3><p>${ind.desc}</p><div class="industry-tags">${ind.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div><div class="industry-expand">${ind.expand}</div>`;
   card.addEventListener('click', () => card.classList.toggle('active'));
   industryGrid.appendChild(card);
 });
@@ -733,7 +781,9 @@ function renderCases() {
   }
   filtered.forEach(c => {
     const catName = caseCategories.find(cat => cat.id === c.cat)?.name || c.industry;
-    grid.innerHTML += `<div class="case-card"><span class="case-cat">${catName}</span><h3>${c.title}</h3><div class="case-subtitle">${c.subtitle}</div><p>${c.desc}</p><div class="case-metrics">${c.metrics.map(m => `<span class="case-metric"><strong>${m.split(' ')[0]}</strong> ${m.split(' ').slice(1).join(' ')}</span>`).join('')}</div></div>`;
+    const imgUrl = caseImgs[c.cat] || '';
+    const imgHtml = imgUrl ? `<div class="case-card-img"><img src="${imgUrl}" alt="${c.title}" loading="lazy"></div>` : '';
+    grid.innerHTML += `<div class="case-card">${imgHtml}<span class="case-cat">${catName}</span><h3>${c.title}</h3><div class="case-subtitle">${c.subtitle}</div><p>${c.desc}</p><div class="case-metrics">${c.metrics.map(m => `<span class="case-metric"><strong>${m.split(' ')[0]}</strong> ${m.split(' ').slice(1).join(' ')}</span>`).join('')}</div></div>`;
   });
 }
 renderCases();

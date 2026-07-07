@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI落地家 — 让AI真正落地 | 企业智能化转型伙伴</title>
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    background: #0a0e1a;
+    color: #e0e6f0;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  a { color: #6ecbf5; text-decoration: none; transition: color 0.3s; }
+  a:hover { color: #a0dfff; }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: #0a0e1a; }
+  ::-webkit-scrollbar-thumb { background: #2a3a5a; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #3a5a8a; }
+
+  /* Nav */
+  .navbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 40px; height: 64px;
+    background: rgba(10, 14, 26, 0.85);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(110, 203, 245, 0.12);
+    transition: transform 0.4s ease;
+  }
+  .navbar.hidden { transform: translateY(-100%); }
+  .nav-brand {
+    font-size: 20px; font-weight: 700;
+    background: linear-gradient(135deg, #6ecbf5, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+  }
+  .nav-brand small { font-size: 13px; font-weight: 400; -webkit-text-fill-color: rgba(224, 230, 240, 0.5); margin-left: 8px; }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a {
+    font-size: 14px; color: rgba(224, 230, 240, 0.7);
+    transition: color 0.3s; position: relative;
+  }
+  .nav-links a::after {
+    content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+    height: 2px; background: linear-gradient(90deg, #6ecbf5, #a78bfa);
+    transform: scaleX(0); transition: transform 0.3s;
+  }
+  .nav-links a:hover { color: #fff; }
+  .nav-links a:hover::after { transform: scaleX(1); }
+  .nav-cta {
+    padding: 8px 20px; border-radius: 20px;
+    background: linear-gradient(135deg, #6ecbf5, #a78bfa);
+    color: #0a0e1a !important; font-weight: 600; font-size: 13px;
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  .nav-cta::after { display: none !important; }
+  .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(110, 203, 245, 0.3); }
+  .nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+  .nav-toggle span { display: block; width: 24px; height: 2px; background: #e0e6f0; border-radius: 2px; transition: 0.3s; }
+
+  /* Sections */
+  section { position: relative; }
+  .section-inner { max-width: 1200px; margin: 0 auto; padding: 100px 40px; }
+  .section-title {
+    font-size: 36px; font-weight: 700; text-align: center; margin-bottom: 12px;
+    background: linear-gradient(135deg, #6ecbf5, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .section-subtitle {
+    text-align: center; color: rgba(224, 230, 240, 0.5);
+    font-size: 16px; margin-bottom: 60px; max-width: 600px; margin-left: auto; margin-right: auto;
+  }
+
+  /* Hero */
+  .hero {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    text-align: center; padding: 120px 40px 80px;
+    background: radial-gradient(ellipse 80% 60% at 50% 20%, rgba(110, 203, 245, 0.06), transparent),
+                radial-gradient(ellipse 50% 40% at 80% 80%, rgba(167, 139, 250, 0.04), transparent),
+                #0a0e1a;
+    position: relative; overflow: hidden;
+  }
+  .hero-grid {
+    position: absolute; inset: 0; overflow: hidden;
+    background-image:
+      linear-gradient(rgba(110, 203, 245, 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(110, 203, 245, 0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+  .hero-content { position: relative; z-index: 2; max-width: 800px; }
+  .hero-badge {
+    display: inline-block; padding: 6px 16px; border-radius: 20px;
+    background: rgba(110, 203, 245, 0.1); border: 1px solid rgba(110, 203, 245, 0.2);
+    font-size: 13px; color: #6ecbf5; margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: clamp(40px, 7vw, 72px); font-weight: 800; line-height: 1.1; margin-bottom: 20px;
+  }
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, #6ecbf5, #a78bfa, #f472b6);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero p {
+    font-size: 18px; color: rgba(224, 230, 240, 0.6);
+    max-width: 600px; margin: 0 auto 40px;
+  }
+  .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-block; padding: 14px 36px; border-radius: 30px;
+    background: linear-gradient(135deg, #6ecbf5, #a78bfa);
+    color: #0a0e1a; font-weight: 700; font-size: 16px;
+    transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; border: none;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 30px rgba(110, 203, 245, 0.25); }
+  .btn-secondary {
+    display: inline-block; padding: 14px 36px; border-radius: 30px;
+    background: transparent; color: #e0e6f0; font-weight: 600; font-size: 16px;
+    border: 1px solid rgba(110, 203, 245, 0.3); transition: all 0.3s; cursor: pointer;
+  }
+  .btn-secondary:hover { border-color: #6ecbf5; background: rgba(110, 203, 245, 0.05); }
+  .hero-stats { display: flex; gap: 48px; justify-content: center; margin-top: 60px; flex-wrap: wrap; }
+  .hero-stat { text-align: center; }
+  .hero-stat-num {
+    font-size: 32px; font-weight: 700;
+    background: linear-gradient(135deg, #6ecbf5, #a78bfa);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero-stat-label { font-size: 13px; color: rgba(224, 230, 240, 0.4); margin-top: 4px; }
+  .scroll-indicator {
+    position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+    color: rgba(224, 230, 240, 0.3); font-size: 12px; animation: bounce 2s infinite;
+  }
+  .scroll-indicator .arrow { width: 20px; height: 20px; border-right: 2px solid; border-bottom: 2px solid; transform: rotate(45deg); opacity: 0.5; }
+  @keyframes bounce { 0%, 100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(8px); } }
+
+  /* ===== Industry Categories Bar ===== */
+  .industry-categories {
+    display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px;
+  }
+  .industry-cat-tab {
+    padding: 7px 18px; border-radius: 18px; font-size: 13px; cursor: pointer;
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(110, 203, 245, 0.08);
+    color: rgba(224, 230, 240, 0.45); transition: all 0.3s; user-select: none;
+  }
+  .industry-cat-tab:hover { border-color: rgba(110, 203, 245, 0.2); color: rgba(224, 230, 240, 0.7); }
+  .industry-cat-tab.active {
+    background: rgba(110, 203, 245, 0.12); border-color: #6ecbf5; color: #6ecbf5;
+  }
+  .industry-cat-count {
+    display: inline-block; margin-left: 4px; font-size: 11px; opacity: 0.5;
+  }
+
+  /* Industry cards */
+  .industries { background: #0d1225; }
+  .industry-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+  .industry-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border: 1px solid rgba(110, 203, 245, 0.08);
+    border-radius: 16px; padding: 28px; cursor: pointer;
+    transition: all 0.4s; position: relative; overflow: hidden;
+  }
+  .industry-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #6ecbf5, #a78bfa);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.4s;
+  }
+  .industry-card:hover { border-color: rgba(110, 203, 245, 0.25); transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
+  .industry-card:hover::before { transform: scaleX(1); }
+  .industry-card.hidden { display: none; }
+  .industry-icon { font-size: 32px; margin-bottom: 12px; display: block; }
+  .industry-card h3 { font-size: 17px; margin-bottom: 6px; }
+  .industry-card .industry-cat-label {
+    font-size: 11px; color: rgba(110, 203, 245, 0.4); margin-bottom: 8px;
+    display: inline-block; padding: 2px 8px; border-radius: 6px;
+    background: rgba(110, 203, 245, 0.06);
+  }
+  .industry-card p { font-size: 14px; color: rgba(224, 230, 240, 0.5); line-height: 1.7; }
+  .industry-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .industry-tags .tag {
+    padding: 3px 10px; border-radius: 10px; font-size: 11px; font-weight: 500;
+    background: rgba(110, 203, 245, 0.08); color: #6ecbf5; border: 1px solid rgba(110, 203, 245, 0.12);
+  }
+  .industry-expand {
+    margin-top: 14px; padding-top: 14px; border-top: 1px solid rgba(110, 203, 245, 0.08);
+    display: none; font-size: 14px; color: rgba(224, 230, 240, 0.55); line-height: 1.7;
+  }
+  .industry-card.active .industry-expand { display: block; }
+
+  /* ===== Cases ===== */
+  .cases { background: #0a0e1a; }
+  .case-tabs { display: flex; gap: 8px; justify-content: center; margin-bottom: 40px; flex-wrap: wrap; }
+  .case-tab {
+    padding: 7px 18px; border-radius: 18px; font-size: 13px;
+    background: rgba(255,255,255,0.02); border: 1px solid rgba(110, 203, 245, 0.08);
+    color: rgba(224, 230, 240, 0.45); cursor: pointer; transition: all 0.3s; user-select: none;
+  }
+  .case-tab.active, .case-tab:hover { background: rgba(110, 203, 245, 0.1); border-color: #6ecbf5; color: #6ecbf5; }
+  .case-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 24px; }
+  .case-card {
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border: 1px solid rgba(110, 203, 245, 0.08); border-radius: 16px; padding: 28px;
+    transition: all 0.4s;
+  }
+  .case-card:hover { border-color: rgba(110, 203, 245, 0.2); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.2); }
+  .case-card .case-cat {
+    display: inline-block; padding: 2px 8px; border-radius: 6px;
+    font-size: 11px; font-weight: 500;
+    background: rgba(167, 139, 250, 0.08); color: #a78bfa; margin-bottom: 10px;
+  }
+  .case-card h3 { font-size: 17px; margin-bottom: 4px; }
+  .case-card .case-subtitle { font-size: 13px; color: rgba(224, 230, 240, 0.35); margin-bottom: 12px; }
+  .case-card p { font-size: 14px; color: rgba(224, 230, 240, 0.5); line-height: 1.7; }
+  .case-metrics { display: flex; gap: 12px; margin: 14px 0; flex-wrap: wrap; }
+  .case-metric {
+    padding: 4px 10px; border-radius: 8px; font-size: 12px;
+    background: rgba(110, 203, 245, 0.06); color: #6ecbf5;
+  }
+  .case-metric strong { font-size: 14px; }
+
+  /* Capabilities */
+  .capabilities { background: #0d1225; }
+  .caps-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
+  .cap-card {
+    text-align: center; padding: 36px 24px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border: 1px solid rgba(110, 203, 245, 0.08); border-radius: 16px;
+    transition: all 0.4s;
+  }
+  .cap-card:hover { border-color: rgba(110, 203, 245, 0.2); transform: translateY(-3px); }
+  .cap-number {
+    width: 48px; height: 48px; line-height: 48px; border-radius: 50%;
+    background: linear-gradient(135deg, rgba(110, 203, 245, 0.15), rgba(167, 139, 250, 0.15));
+    color: #6ecbf5; font-size: 18px; font-weight: 700; margin: 0 auto 16px;
+  }
+  .cap-card h3 { font-size: 16px; margin-bottom: 8px; }
+  .cap-card p { font-size: 13px; color: rgba(224, 230, 240, 0.45); line-height: 1.7; }
+
+  /* Process */
+  .process { margin-top: 60px; }
+  .process h3 {
+    text-align: center; font-size: 22px; margin-bottom: 40px;
+    color: rgba(224, 230, 240, 0.7);
+  }
+  .process-steps { display: flex; justify-content: center; gap: 0; flex-wrap: wrap; position: relative; }
+  .process-steps::before {
+    content: ''; position: absolute; top: 28px; left: 10%; right: 10%;
+    height: 2px; background: linear-gradient(90deg, #6ecbf5, #a78bfa, transparent);
+  }
+  .step { text-align: center; flex: 1; min-width: 120px; max-width: 180px; position: relative; padding: 0 12px; }
+  .step-dot {
+    width: 16px; height: 16px; border-radius: 50%; margin: 0 auto 12px;
+    background: linear-gradient(135deg, #6ecbf5, #a78bfa);
+    box-shadow: 0 0 20px rgba(110, 203, 245, 0.3); position: relative; z-index: 2;
+  }
+  .step h4 { font-size: 14px; margin-bottom: 4px; }
+  .step p { font-size: 12px; color: rgba(224, 230, 240, 0.4); }
+
+  /* Cooperation */
+  .cooperation { background: #0a0e1a; }
+  .coop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+  .coop-card {
+    padding: 32px; border-radius: 16px; text-align: center;
+    background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+    border: 1px solid rgba(110, 203, 245, 0.08); transition: all 0.4s;
+  }
+  .coop-card.featured {
+    border-color: rgba(110, 203, 245, 0.25);
+    background: linear-gradient(135deg, rgba(110, 203, 245, 0.06), rgba(167, 139, 250, 0.06));
+    position: relative;
+  }
+  .coop-card.featured::after {
+    content: '推荐'; position: absolute; top: 12px; right: 12px;
+    padding: 2px 10px; border-radius: 8px; font-size: 11px; font-weight: 600;
+    background: linear-gradient(135deg, #6ecbf5, #a78bfa); color: #0a0e1a;
+  }
+  .coop-card h3 { font-size: 20px; margin-bottom: 4px; }
+  .coop-price { font-size: 36px; font-weight: 700; margin: 16px 0; }
+  .coop-price small { font-size: 14px; font-weight: 400; color: rgba(224, 230, 240, 0.3); }
+  .coop-card ul { list-style: none; text-align: left; margin: 20px 0; }
+  .coop-card li { padding: 6px 0; font-size: 14px; color: rgba(224, 230, 240, 0.5); }
+  .coop-card li::before { content: '✓ '; color: #6ecbf5; }
+  .coop-btn {
+    display: inline-block; padding: 10px 28px; border-radius: 20px;
+    background: transparent; border: 1px solid rgba(110, 203, 245, 0.2);
+    color: #e0e6f0; font-size: 14px; cursor: pointer; transition: all 0.3s;
+  }
+  .coop-btn:hover { background: rgba(110, 203, 245, 0.1); border-color: #6ecbf5; }
+  .coop-card.featured .coop-btn { background: linear-gradient(135deg, #6ecbf5, #a78bfa); color: #0a0e1a; border: none; font-weight: 600; }
+  .coop-card.featured .coop-btn:hover { box-shadow: 0 4px 20px rgba(110, 203, 245, 0.25); }
+
+  /* Contact */
+  .contact { background: #0d1225; }
+  .contact-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start; }
+  .contact-info h3 { font-size: 22px; margin-bottom: 16px; }
+  .contact-info p { color: rgba(224, 230, 240, 0.5); font-size: 15px; margin-bottom: 32px; }
+  .contact-item { display: flex; gap: 16px; margin-bottom: 20px; align-items: center; }
+  .contact-item-icon {
+    width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
+    background: rgba(110, 203, 245, 0.08); font-size: 20px; flex-shrink: 0;
+  }
+  .contact-item-label { font-size: 13px; color: rgba(224, 230, 240, 0.3); }
+  .contact-item-value { font-size: 15px; }
+  .contact-form { display: flex; flex-direction: column; gap: 16px; }
+  .contact-form input, .contact-form textarea {
+    padding: 14px 18px; border-radius: 12px; border: 1px solid rgba(110, 203, 245, 0.12);
+    background: rgba(255,255,255,0.03); color: #e0e6f0; font-size: 14px;
+    font-family: inherit; transition: border-color 0.3s; outline: none;
+  }
+  .contact-form input:focus, .contact-form textarea:focus { border-color: #6ecbf5; }
+  .contact-form textarea { resize: vertical; min-height: 120px; }
+  .contact-form button { align-self: flex-start; }
+
+  footer {
+    text-align: center; padding: 40px; border-top: 1px solid rgba(110, 203, 245, 0.06);
+    color: rgba(224, 230, 240, 0.25); font-size: 13px;
+  }
+
+  /* Particles */
+  .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .particle {
+    position: absolute; width: 2px; height: 2px; background: rgba(110, 203, 245, 0.3);
+    border-radius: 50%; animation: float linear infinite;
+  }
+  @keyframes float {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-10vh) translateX(100px); opacity: 0; }
+  }
+
+  .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.6s ease-out; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0;
+      flex-direction: column; gap: 0; background: rgba(10, 14, 26, 0.95);
+      backdrop-filter: blur(16px); border-bottom: 1px solid rgba(110, 203, 245, 0.1);
+      padding: 8px 0;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 12px 40px; }
+    .nav-links .nav-cta { margin: 12px 40px; text-align: center; }
+    .nav-toggle { display: flex; }
+    .section-inner { padding: 60px 20px; }
+    .section-title { font-size: 28px; }
+    .hero-stats { flex-direction: column; gap: 20px; }
+    .industry-grid, .case-grid, .caps-grid, .coop-grid { grid-template-columns: 1fr; }
+    .contact-wrap { grid-template-columns: 1fr; gap: 40px; }
+    .process-steps::before { display: none; }
+    .process-steps { flex-direction: column; align-items: center; gap: 24px; }
+    .step { max-width: 100%; display: flex; gap: 16px; text-align: left; align-items: center; }
+    .step-dot { margin: 0; flex-shrink: 0; }
+  }
+  @media (max-width: 480px) {
+    .navbar { padding: 0 16px; }
+    .hero { padding: 100px 16px 60px; }
+    .hero h1 { font-size: 32px; }
+    .hero-actions { flex-direction: column; align-items: center; }
+    .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+    .case-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <div class="nav-brand">AI落地家 <small>企业智能化转型伙伴</small></div>
+  <button class="nav-toggle" id="navToggle" aria-label="菜单">
+    <span></span><span></span><span></span>
+  </button>
+  <ul class="nav-links" id="navLinks">
+    <li><a href="#industries" onclick="closeNav()">行业场景</a></li>
+    <li><a href="#cases" onclick="closeNav()">落地案例</a></li>
+    <li><a href="#capabilities" onclick="closeNav()">团队能力</a></li>
+    <li><a href="#cooperation" onclick="closeNav()">合作模式</a></li>
+    <li><a href="#contact" class="nav-cta" onclick="closeNav()">联系我们</a></li>
+  </ul>
+</nav>
+
+<div class="particles" id="particles"></div>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">🚀 专注 AI 落地 · 赋能千行百业</div>
+    <h1>让<span class="highlight">AI</span>真正<br>在您的业务中<span class="highlight">创造价值</span></h1>
+    <p>我们是一支专注AI落地的实战团队，帮助各行各业的客户将人工智能技术转化为可量化、可复制的业务成果。</p>
+    <div class="hero-actions">
+      <a href="#cases" class="btn-primary">查看案例</a>
+      <a href="#contact" class="btn-secondary">聊聊需求 →</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">10+</div>
+        <div class="hero-stat-label">行业覆盖</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">20+</div>
+        <div class="hero-stat-label">落地案例</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">85%+</div>
+        <div class="hero-stat-label">客户续约率</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">8-9人</div>
+        <div class="hero-stat-label">精锐团队</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-indicator">
+    <span>向下探索</span>
+    <div class="arrow"></div>
+  </div>
+</section>
+
+<!-- Industries -->
+<section class="industries" id="industries">
+  <div class="section-inner">
+    <h2 class="section-title fade-in">行业 AI 场景</h2>
+    <p class="section-subtitle fade-in">深耕多个行业，提炼可复用的 AI 应用场景，让技术真正服务于业务</p>
+    <div class="industry-categories fade-in" id="industryCategories"></div>
+    <div class="industry-grid" id="industryGrid"></div>
+  </div>
+</section>
+
+<!-- Cases -->
+<section class="cases" id="cases">
+  <div class="section-inner">
+    <h2 class="section-title fade-in">落地案例</h2>
+    <p class="section-subtitle fade-in">从需求调研到上线交付，每一个案例背后都是实实在在的业务价值</p>
+    <div class="case-tabs fade-in" id="caseTabs"></div>
+    <div class="case-grid" id="caseGrid"></div>
+  </div>
+</section>
+
+<!-- Capabilities -->
+<section class="capabilities" id="capabilities">
+  <div class="section-inner">
+    <h2 class="section-title fade-in">团队服务能力</h2>
+    <p class="section-subtitle fade-in">从战略咨询到技术落地，端到端的 AI 服务能力</p>
+    <div class="caps-grid" id="capsGrid"></div>
+    <div class="process fade-in">
+      <h3>🤝 落地五步法</h3>
+      <div class="process-steps">
+        <div class="step"><div class="step-dot"></div><h4>需求诊断</h4><p>业务场景梳理<br>AI可行性评估</p></div>
+        <div class="step"><div class="step-dot"></div><h4>方案设计</h4><p>技术架构规划<br>ROI 测算</p></div>
+        <div class="step"><div class="step-dot"></div><h4>MVP 开发</h4><p>快速原型验证<br>2-4周出成果</p></div>
+        <div class="step"><div class="step-dot"></div><h4>交付部署</h4><p>生产环境上线<br>效果调优</p></div>
+        <div class="step"><div class="step-dot"></div><h4>持续运营</h4><p>模型迭代优化<br>7×12h 响应</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Cooperation -->
+<section class="cooperation" id="cooperation">
+  <div class="section-inner">
+    <h2 class="section-title fade-in">合作模式</h2>
+    <p class="section-subtitle fade-in">灵活的合作方式，适配不同阶段的企业 AI 需求</p>
+    <div class="coop-grid" id="coopGrid"></div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="contact" id="contact">
+  <div class="section-inner">
+    <h2 class="section-title fade-in">联系我们</h2>
+    <p class="section-subtitle fade-in">无论您是想咨询合作、探讨技术，还是只是想聊聊 AI 的可能性，我们都在</p>
+    <div class="contact-wrap">
+      <div class="contact-info fade-in">
+        <h3>📮 找到我们</h3>
+        <p>期待与您一起探索 AI 的落地可能，让技术为您的业务创造真实价值。</p>
+        <div class="contact-item">
+          <div class="contact-item-icon">📧</div>
+          <div><div class="contact-item-label">邮箱</div><div class="contact-item-value">ai-launcher@example.com</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">💬</div>
+          <div><div class="contact-item-label">微信</div><div class="contact-item-value">AI-Launcher-Team</div></div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-item-icon">📍</div>
+          <div><div class="contact-item-label">坐标</div><div class="contact-item-value">中国 · 上海</div></div>
+        </div>
+      </div>
+      <form class="contact-form fade-in" id="contactForm" onsubmit="handleSubmit(event)">
+        <input type="text" placeholder="您的姓名" required>
+        <input type="email" placeholder="邮箱地址" required>
+        <input type="text" placeholder="公司名称">
+        <textarea placeholder="请描述您的需求或想法，我们会尽快与您联系..." required></textarea>
+        <button type="submit" class="btn-primary">发送消息</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2025 AI落地家 · 让AI真正落地 · 企业智能化转型伙伴</p>
+</footer>
+
+<script>
+// ===== Data =====
+const categories = [
+  { id: 'all', name: '全部行业' },
+  { id: 'gov', name: '🏛️ 政务与公共服务' },
+  { id: 'industry', name: '🏭 制造与工业' },
+  { id: 'health', name: '🏥 医疗与健康' },
+  { id: 'finance', name: '💰 金融与法律' },
+  { id: 'consumer', name: '🛒 消费与零售' },
+  { id: 'edu', name: '🎓 教育与文化' },
+  { id: 'logistics', name: '📦 物流与地产' },
+  { id: 'agri', name: '🌾 农业' },
+];
+
+const industries = [
+  { icon: '🏛️', name: '数字政府', cat: 'gov', desc: '政务服务智能化升级，提升公共服务效率与体验。',
+    tags: ['智能审批', '政策问答', '舆情分析', '公文生成'],
+    expand: '为政府部门打造智能政务助手，实现"一网通办"AI化升级。涵盖智能审批辅助、政策法规问答机器人、舆情监测分析、公文智能生成等场景，帮助政府提升服务效能。' },
+  { icon: '🏭', name: '智能制造', cat: 'industry', desc: 'AI驱动生产优化，从质检到排产的全面智能化。',
+    tags: ['视觉质检', '预测性维护', '排产优化', '工艺参数'],
+    expand: '基于机器视觉实现产品缺陷自动检测，准确率99.5%+。构建设备预测性维护模型，降低非计划停机60%。AI辅助排产优化提升产能利用率15-30%。' },
+  { icon: '🏥', name: '智慧医疗', cat: 'health', desc: '医疗服务全流程智能化，提升诊疗效率与患者体验。',
+    tags: ['智能导诊', '病历结构化', '辅助诊断', '药物挖掘'],
+    expand: 'AI智能导诊系统准确匹配科室与医生，缩短患者候诊时间。病历智能结构化引擎，从非结构化文本中提取关键诊疗信息。医学影像辅助诊断，提升阅片效率与准确率。' },
+  { icon: '💰', name: '金融科技', cat: 'finance', desc: '风控、投研、客服的AI升级，让金融服务更智能。',
+    tags: ['智能风控', '投研助手', '智能客服', '合规审查'],
+    expand: 'AI驱动的智能风控系统，实时识别异常交易与欺诈行为。投研智能助手，自动研报摘要与数据提取。智能客服机器人解决率85%+，显著降低人工成本。' },
+  { icon: '🛒', name: '电商零售', cat: 'consumer', desc: '从选品到营销，AI驱动全链路智能化运营。',
+    tags: ['智能选品', '个性化推荐', '动态定价', '客服机器人'],
+    expand: 'AI选品引擎分析市场趋势与竞品数据，辅助采购决策。个性化推荐系统提升转化率20-40%。动态定价模型实时调整价格策略，最大化利润。AI客服24h在线，解决率超80%。' },
+  { icon: '🎓', name: '智慧教育', cat: 'edu', desc: '个性化学习路径与智能教学辅助。',
+    tags: ['自适应学习', 'AI助教', '智能批改', '学情分析'],
+    expand: '自适应学习引擎根据学生能力动态调整难度与内容。AI助教7×24小时解答学生问题。智能批改系统自动评阅主观题作文，节省教师70%批改时间。学情分析预警学习风险。' },
+  { icon: '📦', name: '智慧物流', cat: 'logistics', desc: '路径优化、仓储调度、最后一公里配送智能化。',
+    tags: ['路径优化', '仓储调度', '运力预测', '异常检测'],
+    expand: 'AI路径规划引擎实时优化配送路线，降低运输成本15-25%。智能仓储调度系统优化库位分配与拣货路径。运力需求预测辅助车辆与人员调度。包裹异常检测降低货损率。' },
+  { icon: '🌾', name: '智慧农业', cat: 'agri', desc: '精准农业与智能种植决策。',
+    tags: ['作物监测', '智能灌溉', '病虫害识别', '产量预测'],
+    expand: '基于遥感与AI的作物生长监测，及时预警病虫害。智能灌溉系统根据土壤与气象数据动态调控用水，节水30%+。产量预测模型辅助种植计划与市场决策。' },
+  { icon: '🎮', name: '泛娱乐', cat: 'edu', desc: '内容生成、个性化推荐与用户体验优化。',
+    tags: ['AIGC内容', '智能推荐', '用户画像', '虚拟人'],
+    expand: 'AIGC辅助内容创作，包括文案、配图、短视频脚本生成。个性化内容推荐引擎提升用户留存与时长。AI用户画像实现精准运营。虚拟数字人直播与互动。' },
+  { icon: '🐾', name: '宠物经济', cat: 'health', desc: '宠物健康监测、智能喂养与服务平台。',
+    tags: ['健康识别', '智能喂养', '行为分析', '在线问诊'],
+    expand: 'AI宠物面部识别建立宠物身份档案。智能喂养设备根据宠物品种、年龄自动配餐。行为分析监测异常行为预警健康问题。AI在线问诊辅助宠物主初步判断病情。' },
+  { icon: '👴', name: '银发经济', cat: 'health', desc: '智慧养老与适老化AI服务。',
+    tags: ['跌倒检测', '语音助手', '健康管理', '陪伴机器人'],
+    expand: 'AI跌倒检测系统实时监测老人安全状态。适老化语音助手简化操作，支持方言识别。智能健康管理系统自动记录体征数据并预警。AI陪伴机器人缓解孤独感。' },
+  { icon: '🌆', name: '智慧地产', cat: 'logistics', desc: '楼宇管理、营销获客与物业服务智能化。',
+    tags: ['智能楼宇', 'VR看房', '获客模型', '物业AI'],
+    expand: 'AI智能楼宇管理系统优化能耗与安防。VR+AI自动生成3D看房内容。客户意向预测模型提升营销转化率。物业AI助手自动处理业主报修与咨询。' },
+  { icon: '🍔', name: '餐饮新零售', cat: 'consumer', desc: '点餐、供应链、营销全链路AI升级。',
+    tags: ['智能点餐', '供应链预测', '菜品推荐', '食安监测'],
+    expand: 'AI语音点餐系统降低人力成本。供应链需求预测减少食材浪费15-20%。个性化菜品推荐提升客单价。AI后厨食安监测识别违规操作。' },
+  { icon: '⚖️', name: '法律服务', cat: 'finance', desc: '智能合同审查、法律检索与案件预测。',
+    tags: ['合同审查', '法律检索', '案件预测', '文书生成'],
+    expand: 'AI合同审查系统快速识别风险条款与合规问题。智能法律检索从海量判例中精准匹配。案件结果预测辅助诉讼策略制定。法律文书自动生成，提效80%。' },
+];
+
+// Case categories for filtering
+const caseCategories = [
+  { id: 'all', name: '全部案例' },
+  { id: 'retail', name: '🛒 消费零售' },
+  { id: 'manufacturing', name: '🏭 智能制造' },
+  { id: 'finance', name: '💰 金融' },
+  { id: 'government', name: '🏛️ 数字政府' },
+  { id: 'healthcare', name: '🏥 医疗健康' },
+  { id: 'education', name: '🎓 教育' },
+  { id: 'logistics', name: '📦 物流' },
+  { id: 'agri', name: '🌾 农业' },
+  { id: 'entertainment', name: '🎮 娱乐' },
+  { id: 'realestate', name: '🌆 地产' },
+  { id: 'catering', name: '🍔 餐饮' },
+  { id: 'legal', name: '⚖️ 法律' },
+];
+
+const cases = [
+  // == 政务 ==
+  { industry: '数字政府', cat: 'government', title: '某市政务服务中心AI助理', subtitle: '覆盖200+事项 · 办理效率提升3倍', desc: '为市级政务服务中心打造AI办事助理，支持200+政务事项的智能咨询与材料预审。集成自然语言理解与知识图谱，准确回答率92%，窗口平均办理时间缩短65%。', metrics: ['200+ 事项覆盖', '92% 准确率', '65% 时间缩短'] },
+  { industry: '数字政府', cat: 'government', title: '省级智慧税务AI咨询平台', subtitle: '覆盖全省 · 智能问答准确率94%', desc: '为省级税务局搭建AI智能咨询平台，覆盖税收政策、申报流程、优惠政策等1000+知识点。支持方言识别与多轮对话，日均处理咨询超2万次，人工坐席转接率降低55%。', metrics: ['1000+ 知识点', '94% 准确率', '55% 转接降低'] },
+  { industry: '数字政府', cat: 'government', title: '城市AI应急指挥调度系统', subtitle: '多源数据融合 · 响应速度提升60%', desc: '为市级应急管理局构建AI指挥调度平台，整合气象、交通、消防、医疗等多源数据。AI自动研判灾害等级、生成处置方案、调度最优资源，应急响应速度提升60%。', metrics: ['多源融合', '60% 响应提速', '自动研判'] },
+
+  // == 制造 ==
+  { industry: '智能制造', cat: 'manufacturing', title: '电子元器件产线AI视觉质检', subtitle: '缺陷检出率99.6% · 检测速度提升5倍', desc: '为3C电子制造商部署AI视觉质检系统，替代传统人工目检。在微米级精度下实现表面缺陷、尺寸偏差、焊点质量等30+类缺陷的实时检测，误报率低于0.5%。', metrics: ['99.6% 检出率', '5x 检测速度', '90% 人力节省'] },
+  { industry: '智能制造', cat: 'manufacturing', title: '汽车零部件厂AI预测性维护', subtitle: '非计划停机降低70% · 年节省千万级', desc: '为大型汽车零部件工厂部署设备预测性维护系统，实时采集振动、温度、电流等多维传感数据，AI模型提前7天预警设备故障，非计划停机时间降低70%，年维护成本节省超1200万。', metrics: ['70% 停机降低', '提前7天预警', '1200万+ 节省'] },
+  { industry: '智能制造', cat: 'manufacturing', title: '光伏面板AI缺陷检测分选', subtitle: '每分钟检测120片 · 准确率99.8%', desc: '为光伏制造企业部署AI视觉检测系统，在高速产线上实时检测电池片隐裂、色差、断栅等缺陷。单台设备每分钟检测120片，准确率99.8%，替代60名质检人员。', metrics: ['120片/分钟', '99.8% 准确率', '60人替代'] },
+
+  // == 金融 ==
+  { industry: '金融科技', cat: 'finance', title: '城商行智能风控中台', subtitle: '实时交易监控 · 欺诈损失降低60%', desc: '构建全行级智能风控中台，整合线上交易、渠道行为、设备指纹等多维数据。AI模型实时评估交易风险，毫秒级拦截异常交易，同时降低误杀率60%。', metrics: ['60% 欺诈降低', '< 100ms 响应', '60% 误杀降低'] },
+  { industry: '金融科技', cat: 'finance', title: '头部券商AI投研助手', subtitle: '研报处理效率提升10倍 · 覆盖5000+标的', desc: '为头部券商打造AI投研辅助平台，自动抓取、解析、摘要海量研报与公告。支持自然语言查询，30秒生成个股分析报告。覆盖A股、港股、美股5000+标的，投研团队效率提升10倍。', metrics: ['10x 效率', '5000+ 标的', '30秒出报告'] },
+  { industry: '金融科技', cat: 'finance', title: '保险理赔AI智能定损平台', subtitle: '单案定损缩短至5分钟 · 准确率96%', desc: '为大型保险公司部署AI智能定损系统，车主拍照上传即可自动识别损伤部位、评估维修费用。结合历史维修数据与配件价格库，定损准确率96%，单案处理时间从2小时缩短至5分钟。', metrics: ['5分钟定损', '96% 准确率', '2h→5min'] },
+
+  // == 政务（数字政府已在上面，再加一个政法方向）==
+  // 用 government 标签多一个案例
+  { industry: '数字政府', cat: 'government', title: '智慧城管AI视频分析平台', subtitle: '自动识别12类城市管理问题 · 处置率92%', desc: '为城市管理部门部署AI视频分析平台，自动识别占道经营、垃圾堆积、违规停车、井盖缺失等12类城市问题。系统7×24小时自动巡查，发现问题自动派单，处置率提升至92%。', metrics: ['12类识别', '24h自动巡查', '92% 处置率'] },
+
+  // == 医疗 ==
+  { industry: '智慧医疗', cat: 'healthcare', title: '三甲医院AI辅助诊断平台', subtitle: '影像阅片提速4倍 · 辅助诊断准确率97%', desc: '为三甲医院放射科部署AI辅助诊断系统，覆盖肺部CT、乳腺钼靶、骨关节X光等场景。AI自动标注异常区域并生成结构化报告，显著降低漏诊率。', metrics: ['4x 阅片提速', '97% 准确率', '30% 漏诊降低'] },
+  { industry: '智慧医疗', cat: 'healthcare', title: '连锁体检机构AI报告解读', subtitle: '日均处理5000份报告 · 解读覆盖率100%', desc: '为全国连锁体检中心部署AI报告解读系统，自动分析血常规、生化、影像等100+项指标，生成通俗易懂的解读建议。异常指标自动标记并推送复查提醒，客户满意度提升35%。', metrics: ['5000份/日', '100+ 项指标', '35% 满意度提升'] },
+  { industry: '智慧医疗', cat: 'healthcare', title: 'AI药物分子筛选加速平台', subtitle: '筛选效率提升100倍 · 缩短研发周期2年', desc: '为生物医药企业构建AI药物分子筛选平台，基于深度学习预测小分子药物活性与毒性。从百万级分子库中快速筛选候选化合物，将传统2-3年的筛选周期缩短至2-3个月。', metrics: ['100x 效率', '周期缩短2年', '百万级筛选'] },
+
+  // == 消费零售 ==
+  { industry: '电商零售', cat: 'retail', title: '某头部电商平台智能客服升级', subtitle: '日处理百万级咨询 · 解决率提升至85%', desc: '为电商平台部署AI智能客服系统，覆盖售前咨询、售中查询、售后处理全流程。引入多轮对话与情感识别，客户满意率提升22个百分点，人工成本降低40%。', metrics: ['85% 自动解决率', '40% 成本降低', '22% 满意度提升'] },
+  { industry: '电商零售', cat: 'retail', title: '新消费品牌AI全渠道运营', subtitle: 'ROI提升3倍 · 复购率增长40%', desc: '协助新消费品牌构建AI驱动的全渠道运营体系，包括用户分群、个性化触达、动态定价与库存优化。实现精准营销ROI提升3倍，会员复购率增长40%。', metrics: ['3x ROI提升', '40% 复购增长', '全渠道打通'] },
+  { industry: '电商零售', cat: 'retail', title: '连锁便利店AI动态定价系统', subtitle: '万店级部署 · 毛利率提升5个百分点', desc: '为全国连锁便利店部署AI动态定价系统，基于实时销量、库存、天气、周边竞争等多维数据，自动调整商品价格与促销策略。万店级部署后，整体毛利率提升5个百分点，滞销库存降低35%。', metrics: ['万店部署', '毛利率+5%', '库存降35%'] },
+  { industry: '电商零售', cat: 'retail', title: '跨境出海AI多语言运营平台', subtitle: '覆盖50+国家 · 翻译准确率98%', desc: '为跨境电商企业搭建AI多语言运营平台，自动翻译商品详情、客服对话、营销内容。支持50+语言，专业术语翻译准确率98%，海外市场运营效率提升6倍，客诉率降低40%。', metrics: ['50+ 语言', '98% 准确率', '6x 效率'] },
+
+  // == 教育 ==
+  { industry: '智慧教育', cat: 'education', title: '在线教育平台个性化学习系统', subtitle: '20万学员 · 完课率提升35%', desc: '为在线教育平台构建自适应学习引擎，基于知识图谱与学员行为数据，动态规划个性化学习路径。智能推荐习题与课程，学员完课率提升35%，考试通过率提升28%。', metrics: ['35% 完课提升', '28% 通过率提升', '20万+ 学员'] },
+  { industry: '智慧教育', cat: 'education', title: '高校AI辅助论文检索与学术助手', subtitle: '覆盖5000+期刊 · 文献筛选效率提升8倍', desc: '为985高校图书馆部署AI学术检索助手，自然语言理解科研需求，智能匹配中外文文献。自动生成文献综述摘要，标注核心观点与研究方法，研究生文献调研效率提升8倍。', metrics: ['5000+ 期刊', '8x 效率提升', '自动综述'] },
+  { industry: '智慧教育', cat: 'education', title: '少儿AI编程教育互动平台', subtitle: '50万注册用户 · 月活跃率78%', desc: '打造AI驱动的少儿编程教育平台，AI助教实时解答编程问题、自动批改代码作业、个性化推荐练习项目。内置AI游戏化学习引擎，学生月活跃率78%，续费率85%。', metrics: ['50万用户', '78% 月活跃', '85% 续费率'] },
+
+  // == 物流 ==
+  { industry: '智慧物流', cat: 'logistics', title: '区域配送中心路径优化系统', subtitle: '配送成本降低22% · 准时率99.3%', desc: '为区域物流配送中心开发AI路径规划系统，综合考虑交通实时数据、订单分布、车辆装载约束等因素，动态优化配送路线。日均处理5000+配送任务。', metrics: ['22% 成本降低', '99.3% 准时率', '5000+ 日单量'] },
+  { industry: '智慧物流', cat: 'logistics', title: '智能仓储AI分拣调度系统', subtitle: '分拣效率提升3倍 · 错误率低于0.01%', desc: '为大型电商仓储中心部署AI分拣调度系统，AI算法实时优化商品库位分配、拣货路径与机器人调度。分拣效率从每人每小时120件提升至360件，错误率低于0.01%。', metrics: ['3x 效率', '0.01% 错误率', '智能调度'] },
+  { industry: '智慧物流', cat: 'logistics', title: '跨境物流AI通关与路径优化', subtitle: '通关时效缩短50% · 物流成本降低18%', desc: '为跨境物流企业搭建AI智慧通关平台，自动识别通关单证、预判查验风险、优化多式联运路径。AI辅助申报准确率99.5%，通关时效缩短50%，综合物流成本降低18%。', metrics: ['50% 通关提速', '18% 成本降低', '99.5% 准确率'] },
+
+  // == 农业 ==
+  { industry: '智慧农业', cat: 'agri', title: '智慧农业AI病虫害预警平台', subtitle: '覆盖10万亩 · 预警准确率92%', desc: '为大型农业合作社部署AI病虫害预警平台，结合卫星遥感、气象数据与田间传感器，AI模型实时监测作物生长状态，提前5-7天预警病虫害风险。农药使用量降低40%，亩均增产15%。', metrics: ['10万亩覆盖', '92% 预警准确率', '40% 农药减量'] },
+  { industry: '智慧农业', cat: 'agri', title: '智能温室AI种植决策系统', subtitle: '节水35% · 综合收益提升25%', desc: '为现代化温室大棚部署AI种植决策系统，根据光照、温湿度、土壤养分等实时数据，自动调控灌溉、施肥、通风策略。实现节水35%，肥料利用率提升40%，综合种植收益提升25%。', metrics: ['35% 节水', '40% 肥料增效', '25% 收益提升'] },
+  { industry: '智慧农业', cat: 'agri', title: '农产品AI分级与供应链优化', subtitle: '分选效率提升5倍 · 损耗率降低20%', desc: '为农产品加工企业部署AI视觉分选系统，对水果、蔬菜进行大小、色泽、瑕疵等多维度自动分级。结合市场需求数据优化供应链分配，分选效率提升5倍，运输损耗率降低20%。', metrics: ['5x 分选效率', '20% 损耗降低', '自动分级'] },
+
+  // == 娱乐 ==
+  { industry: '泛娱乐', cat: 'entertainment', title: '短视频平台AI内容推荐引擎', subtitle: '用户时长提升40% · 冷启动效率提升3倍', desc: '为短视频平台优化AI推荐引擎，引入多模态理解与用户兴趣动态建模。新内容冷启动推荐效率提升3倍，用户日均使用时长提升40%，内容消费多样性提升25%。', metrics: ['40% 时长提升', '3x 冷启动', '25% 多样性'] },
+  { industry: '泛娱乐', cat: 'entertainment', title: 'AI虚拟主播直播互动系统', subtitle: '日均直播12小时 · 互动率提升60%', desc: '为直播电商平台开发AI虚拟数字人主播，支持实时语音互动、表情驱动、商品讲解。日均直播12小时不间断，观众互动率较真人主播提升60%，带货转化率提升30%。', metrics: ['12h 不间断', '60% 互动率', '30% 转化提升'] },
+  { industry: '泛娱乐', cat: 'entertainment', title: 'AIGC短视频脚本与配图平台', subtitle: '脚本生成30秒/条 · 覆盖100+内容类型', desc: '为MCN机构搭建AIGC内容创作平台，AI自动生成短视频脚本、分镜建议、配图素材。覆盖剧情、科普、美食、旅游等100+内容类型，单条脚本生成仅需30秒，内容产能提升10倍。', metrics: ['30秒/脚本', '100+ 类型', '10x 产能'] },
+
+  // == 地产 ==
+  { industry: '智慧地产', cat: 'realestate', title: '智慧楼宇AI能耗优化系统', subtitle: '能耗降低28% · 年节省电费超300万', desc: '为大型商业综合体部署AI楼宇能耗管理系统，基于人流量、天气、时段等多维数据，智能调控空调、照明、电梯等系统。综合能耗降低28%，年节省电费超300万元。', metrics: ['28% 能耗降低', '300万+ 节省', '智能调控'] },
+  { industry: '智慧地产', cat: 'realestate', title: 'AI房产营销获客与VR看房', subtitle: '线索转化率提升50% · 看房成本降低70%', desc: '为房地产开发商搭建AI营销获客平台，客户意向预测模型精准锁定高意向买家，转化率提升50%。AI自动生成VR全景看房并匹配客户偏好，线下看房成本降低70%。', metrics: ['50% 转化提升', '70% 成本降低', 'AI匹配'] },
+
+  // == 餐饮 ==
+  { industry: '餐饮新零售', cat: 'catering', title: '连锁餐饮AI供应链预测系统', subtitle: '食材损耗降低25% · 缺货率降低60%', desc: '为连锁餐饮品牌部署AI供应链预测系统，基于历史销售、天气、节假日、促销活动等多维数据，精准预测各门店每日食材需求。食材损耗率降低25%，热门菜品缺货率降低60%。', metrics: ['25% 损耗降低', '60% 缺货降低', '精准预测'] },
+  { industry: '餐饮新零售', cat: 'catering', title: 'AI智慧后厨食安监测系统', subtitle: '违规操作识别率95% · 食安投诉降80%', desc: '为大型餐饮集团部署AI后厨食安监测系统，通过视频分析实时识别未戴口罩/帽、生熟混放、操作不规范等违规行为。自动告警并记录，违规操作识别率95%，食安投诉降低80%。', metrics: ['95% 违规识别', '80% 投诉降低', '24h监控'] },
+
+  // == 法律 ==
+  { industry: '法律服务', cat: 'legal', title: 'AI合同智能审查与风险预警', subtitle: '审查效率提升8倍 · 风险条款识别率97%', desc: '为大型企业法务部部署AI合同审查系统，自动识别合同中的风险条款、义务缺失、合规问题。支持中英文合同，覆盖采购、销售、劳务、保密等20+类合同模板，审查效率提升8倍。', metrics: ['8x 效率', '97% 风险识别', '20+ 模板'] },
+  { industry: '法律服务', cat: 'legal', title: '律所AI法律检索与文书生成', subtitle: '检索准确率96% · 文书生成缩短至15分钟', desc: '为头部律所搭建AI法律检索与文书系统，自然语言理解案情描述，智能匹配相关法条、司法解释与判例。AI辅助生成起诉状、答辩状等法律文书，单份文书生成从4小时缩短至15分钟。', metrics: ['96% 检索准确率', '4h→15min', '智能匹配判例'] },
+  { industry: '法律服务', cat: 'legal', title: '互联网法院AI智能调解系统', subtitle: '调解成功率72% · 平均结案时间3天', desc: '为互联网法院部署AI智能调解系统，AI分析案件争议焦点、评估双方诉求合理性、生成调解方案建议。小额纠纷调解成功率72%，平均结案时间从15天缩短至3天。', metrics: ['72% 调解成功率', '3天结案', '15→3天'] },
+];
+
+const capabilities = [
+  { num: '01', title: 'AI战略咨询', desc: '从业务痛点出发，评估AI可行性，规划技术路线与实施路径，确保每一分投入都有明确的业务回报。' },
+  { num: '02', title: '大模型应用开发', desc: '基于GPT、Claude、文心、通义等主流大模型，开发RAG、Agent、工作流自动化等企业级应用。' },
+  { num: '03', title: '计算机视觉', desc: '图像分类、目标检测、OCR、人脸识别、视频分析等视觉AI能力，覆盖质检、安防、医疗等场景。' },
+  { num: '04', title: 'NLP与知识图谱', desc: '文本分析、知识抽取、智能问答、文档理解等NLP能力，帮助企业沉淀与利用知识资产。' },
+  { num: '05', title: '数据工程与AI基础', desc: '数据采集清洗、特征工程、模型训练部署、MLOps全链路服务，夯实AI落地基础设施。' },
+  { num: '06', title: 'AI产品设计与体验', desc: '以用户为中心的AI产品设计，包括交互原型、Prompt工程、对话设计、可视化等，让AI好用易用。' },
+];
+
+const coopModels = [
+  { name: '项目制交付', price: '按需报价', featured: false, features: ['需求明确的全流程交付', '2-8周快速交付周期', '含部署与验收标准', '3个月免费维保', '源码/模型可交付'] },
+  { name: '长期技术伙伴', price: '月付制', featured: true, features: ['月度AI技术支持', '不限次需求评估', '优先响应（4h内）', '模型持续迭代优化', '年度战略复盘'] },
+  { name: 'AI能力共建', price: '利润分成', featured: false, features: ['联合产品/解决方案开发', '技术入股模式可选', '知识产权共商共享', '市场渠道资源共享', '长期利益绑定'] },
+];
+
+// ===== Render Industry Category Tabs =====
+const catContainer = document.getElementById('industryCategories');
+let activeIndustryCat = 'all';
+
+categories.forEach(cat => {
+  const tab = document.createElement('button');
+  tab.className = `industry-cat-tab ${cat.id === 'all' ? 'active' : ''}`;
+  const count = cat.id === 'all' ? industries.length : industries.filter(i => i.cat === cat.id).length;
+  tab.innerHTML = `${cat.name} <span class="industry-cat-count">${count}</span>`;
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.industry-cat-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeIndustryCat = cat.id;
+    filterIndustries();
+  });
+  catContainer.appendChild(tab);
+});
+
+function filterIndustries() {
+  document.querySelectorAll('.industry-card').forEach(card => {
+    const cat = card.dataset.cat;
+    card.classList.toggle('hidden', activeIndustryCat !== 'all' && cat !== activeIndustryCat);
+  });
+}
+
+// ===== Render Industry Cards =====
+const industryGrid = document.getElementById('industryGrid');
+industries.forEach(ind => {
+  const card = document.createElement('div');
+  card.className = 'industry-card fade-in';
+  card.dataset.cat = ind.cat;
+  card.innerHTML = `
+    <span class="industry-icon">${ind.icon}</span>
+    <span class="industry-cat-label">${categories.find(c => c.id === ind.cat)?.name || ''}</span>
+    <h3>${ind.name}</h3>
+    <p>${ind.desc}</p>
+    <div class="industry-tags">${ind.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+    <div class="industry-expand">${ind.expand}</div>
+  `;
+  card.addEventListener('click', () => card.classList.toggle('active'));
+  industryGrid.appendChild(card);
+});
+
+// ===== Render Case Tabs =====
+const caseTabsEl = document.getElementById('caseTabs');
+let activeCaseCat = 'all';
+
+caseCategories.forEach(cat => {
+  const tab = document.createElement('button');
+  tab.className = `case-tab ${cat.id === 'all' ? 'active' : ''}`;
+  const count = cat.id === 'all' ? cases.length : cases.filter(c => c.cat === cat.id).length;
+  tab.innerHTML = `${cat.name} <span class="industry-cat-count">${count}</span>`;
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.case-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    activeCaseCat = cat.id;
+    renderCases();
+  });
+  caseTabsEl.appendChild(tab);
+});
+
+function renderCases() {
+  const grid = document.getElementById('caseGrid');
+  grid.innerHTML = '';
+  const filtered = activeCaseCat === 'all' ? cases : cases.filter(c => c.cat === activeCaseCat);
+  if (filtered.length === 0) {
+    grid.innerHTML = '<p style="text-align:center;color:rgba(224,230,240,0.3);padding:40px;grid-column:1/-1;">暂无该分类的案例，看看其他分类吧</p>';
+    return;
+  }
+  filtered.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'case-card fade-in';
+    const catName = caseCategories.find(cat => cat.id === c.cat)?.name || c.industry;
+    card.innerHTML = `
+      <span class="case-cat">${catName}</span>
+      <h3>${c.title}</h3>
+      <div class="case-subtitle">${c.subtitle}</div>
+      <p>${c.desc}</p>
+      <div class="case-metrics">${c.metrics.map(m => `<span class="case-metric"><strong>${m.split(' ')[0]}</strong> ${m.split(' ').slice(1).join(' ')}</span>`).join('')}</div>
+    `;
+    grid.appendChild(card);
+  });
+  observeFadeIns();
+}
+renderCases();
+
+// ===== Render capabilities =====
+document.getElementById('capsGrid').innerHTML = capabilities.map(cap => `
+  <div class="cap-card fade-in">
+    <div class="cap-number">${cap.num}</div>
+    <h3>${cap.title}</h3>
+    <p>${cap.desc}</p>
+  </div>
+`).join('');
+
+// ===== Render cooperation =====
+document.getElementById('coopGrid').innerHTML = coopModels.map(m => `
+  <div class="coop-card fade-in ${m.featured ? 'featured' : ''}">
+    <h3>${m.name}</h3>
+    <div class="coop-price">${m.price} <small>/${m.name === '项目制交付' ? '项目' : '月'}</small></div>
+    <ul>${m.features.map(f => `<li>${f}</li>`).join('')}</ul>
+    <button class="coop-btn" onclick="document.getElementById('contact').scrollIntoView({behavior:'smooth'})">立即咨询</button>
+  </div>
+`).join('');
+
+// ===== Particles =====
+(function() {
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (15 + Math.random() * 25) + 's';
+    p.style.animationDelay = (Math.random() * 20) + 's';
+    p.style.width = p.style.height = (1 + Math.random() * 2) + 'px';
+    container.appendChild(p);
+  }
+})();
+
+// ===== Scroll fade-in =====
+function observeFadeIns() {
+  document.querySelectorAll('.fade-in:not(.visible)').forEach(el => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.85) el.classList.add('visible');
+  });
+  document.querySelectorAll('.fade-in:not(._obs)').forEach(el => {
+    el.classList.add('_obs');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    obs.observe(el);
+  });
+}
+observeFadeIns();
+window.addEventListener('scroll', observeFadeIns);
+
+// ===== Navbar =====
+let lastScroll = 0;
+window.addEventListener('scroll', () => {
+  const s = window.scrollY;
+  const nav = document.getElementById('navbar');
+  nav.classList.toggle('hidden', s > 100 && s > lastScroll);
+  lastScroll = s;
+}, { passive: true });
+
+document.getElementById('navToggle').addEventListener('click', () => {
+  document.getElementById('navLinks').classList.toggle('open');
+});
+function closeNav() { document.getElementById('navLinks').classList.remove('open'); }
+
+// ===== Form =====
+function handleSubmit(e) {
+  e.preventDefault();
+  const btn = e.target.querySelector('button');
+  const orig = btn.textContent;
+  btn.textContent = '✅ 消息已发送，我们会尽快联系您！';
+  btn.style.background = 'rgba(110, 203, 245, 0.1)';
+  btn.style.color = '#6ecbf5';
+  setTimeout(() => {
+    btn.textContent = orig;
+    btn.style.background = '';
+    btn.style.color = '';
+    e.target.reset();
+  }, 3000);
+}
+
+// ===== Smooth scroll =====
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - 70, behavior: 'smooth' });
+    }
+  });
+});
+</script>
+</body>
+</html>", "file_path": "D:\\Cherry\\AsiaInfo\\AI落地家_团队推广门户.html"}
