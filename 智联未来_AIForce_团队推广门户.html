@@ -472,7 +472,7 @@
       </div>
       <div class="hero-stats">
         <div class="hero-stat"><div class="hero-stat-num">14+</div><div class="hero-stat-label">行业覆盖</div></div>
-        <div class="hero-stat"><div class="hero-stat-num">20+</div><div class="hero-stat-label">落地案例</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">40+</div><div class="hero-stat-label">落地案例</div></div>
         <div class="hero-stat"><div class="hero-stat-num">85%+</div><div class="hero-stat-label">客户续约率</div></div>
         <div class="hero-stat"><div class="hero-stat-num">15人</div><div class="hero-stat-label">精锐团队</div></div>
       </div>
@@ -605,6 +605,9 @@ const industries = [
   { icon: '🌆', name: '智慧地产', cat: 'logistics', desc: '楼宇管理、营销获客与物业服务智能化。', tags: ['智能楼宇', 'VR看房', '获客模型', '物业AI'], expand: 'AI智能楼宇管理系统优化能耗与安防。VR+AI自动生成3D看房内容。客户意向预测模型提升营销转化率。物业AI助手自动处理业主报修与咨询。' },
   { icon: '🍔', name: '餐饮新零售', cat: 'consumer', desc: '点餐、供应链、营销全链路AI升级。', tags: ['智能点餐', '供应链预测', '菜品推荐', '食安监测'], expand: 'AI语音点餐系统降低人力成本。供应链需求预测减少食材浪费15-20%。个性化菜品推荐提升客单价。AI后厨食安监测识别违规操作。' },
   { icon: '⚖️', name: '法律服务', cat: 'finance', desc: '智能合同审查、法律检索与案件预测。', tags: ['合同审查', '法律检索', '案件预测', '文书生成'], expand: 'AI合同审查系统快速识别风险条款与合规问题。智能法律检索从海量判例中精准匹配。案件结果预测辅助诉讼策略制定。法律文书自动生成，提效80%。' },
+  { icon: '🚄', name: '智慧交通', cat: 'gov', desc: 'AI视频分析与智能调度，提升交通运行安全与效率。', tags: ['视频分析', '事件检测', '智能调度', '拥堵预测'], expand: 'AI视频分析系统实时检测交通事故、异常停车等事件。智能调度优化路网通行效率，拥堵识别提前15分钟预警，降低事故率。覆盖高速公路与城市交通场景。' },
+  { icon: '📡', name: '通信', cat: 'industry', desc: '5G网络智能运维与算力管控，赋能通信行业AI升级。', tags: ['AIOps', '故障预测', '算力调度', '智能运维'], expand: 'AI驱动的5G网络智能运维，实现故障预测、根因分析与自动修复。算力云管控平台异构纳管GPU/NPU资源，支持vGPU/vNPU虚拟化与跨域集群调度，为AI训练推理提供算力底座。' },
+  { icon: '⚡', name: '能源', cat: 'industry', desc: '设备预测性维护与AI健康管理，降低能源行业运营风险。', tags: ['预测性维护', 'IoT分析', '时序预测', '数字孪生'], expand: 'AI预测性维护平台面向能源关键设备，接入传感器数据实现故障提前预警。时序分析与寿命预测模型降低非计划停机，延长设备寿命。覆盖风电、火电、光伏等能源场景。' },
 ];
 
 const caseCategories = [
@@ -615,6 +618,9 @@ const caseCategories = [
   { id: 'agri', name: '🌾 农业' }, { id: 'entertainment', name: '🎮 娱乐' },
   { id: 'realestate', name: '🌆 地产' }, { id: 'catering', name: '🍔 餐饮' },
   { id: 'legal', name: '⚖️ 法律' },
+  { id: 'transportation', name: '🚄 交通' },
+  { id: 'telecom', name: '📡 通信' },
+  { id: 'energy', name: '⚡ 能源' },
 ];
 
 const cases = [
@@ -654,6 +660,21 @@ const cases = [
   { industry: '法律服务', cat: 'legal', title: 'AI合同智能审查与风险预警', subtitle: '审查效率提升8倍 · 风险条款识别率97%', desc: '为大型企业法务部部署AI合同审查系统，自动识别合同中的风险条款、义务缺失、合规问题。支持中英文合同，覆盖20+类合同模板，审查效率提升8倍。', metrics: ['8x 效率', '97% 风险识别', '20+ 模板'] },
   { industry: '法律服务', cat: 'legal', title: '律所AI法律检索与文书生成', subtitle: '检索准确率96% · 文书生成缩短至15分钟', desc: '为头部律所搭建AI法律检索与文书系统，自然语言理解案情描述，智能匹配相关法条、司法解释与判例。AI辅助法律文书生成，单份文书生成从4小时缩短至15分钟。', metrics: ['96% 检索准确率', '4h→15min', '智能匹配判例'] },
   { industry: '法律服务', cat: 'legal', title: '互联网法院AI智能调解系统', subtitle: '调解成功率72% · 平均结案时间3天', desc: '为互联网法院部署AI智能调解系统，AI分析案件争议焦点、评估诉求合理性、生成调解方案。小额纠纷调解成功率72%，平均结案时间从15天缩短至3天。', metrics: ['72% 调解成功率', '3天结案', '15→3天'] },
+
+  // ===== 亚信科技AI案例 =====
+  { industry: '数字政府', cat: 'government', title: '某市智慧政务AI赋能平台', subtitle: '覆盖2000+事项 · 智能审批准确率98.5%', desc: '为市级政务服务中心构建AI赋能平台，整合NLP、OCR、知识图谱、智能问答等AI能力。覆盖2000+政务事项的智能审批与"秒批秒办"，人工审核工作量减少70%，企业开办时间从5天缩至8小时。', metrics: ['2000+事项', '98.5%准确率', '70%人工减少'] },
+  { industry: '金融科技', cat: 'finance', title: '某证券公司智能投研与风控平台', subtitle: '研报分析效率提升15倍 · 覆盖10000+标的', desc: '为头部券商构建基于大模型的智能投研辅助与风控平台，实现研报自动分析与舆情风险预警。覆盖10000+只标的，模型推理延迟低于500ms，投研效率提升15倍，舆情风险提前4小时预警。', metrics: ['15倍效率', '10000+标的', '提前4h预警'] },
+  { industry: '智慧交通', cat: 'transportation', title: '某省高速公路AI视频智能分析系统', subtitle: '事件检测准确率96% · 事故率同比下降28%', desc: '在全省3000+公里高速公路部署AI视频分析系统，实时自动检测交通事故、异常停车、行人闯入、拥堵等事件。平均检测延迟&lt;5秒，拥堵识别提前15分钟，事故率同比下降28%。', metrics: ['96%准确率', '&lt;5秒延迟', '28%事故降低'] },
+  { industry: '通信', cat: 'telecom', title: '某运营商5G网络智能运维平台(AIOps)', subtitle: '故障预测准确率90%+ · 修复时间缩短65%', desc: '面向5G核心网与无线接入网构建AIOps智能运维体系，实现故障预测、异常检测、根因分析、自动修复闭环运维。覆盖30万+网元，年减少业务中断损失超5000万元。', metrics: ['90%+预测准确', '65%修复缩短', '5000万+节省'] },
+  { industry: '电商零售', cat: 'retail', title: '某电商平台智能推荐与搜索系统', subtitle: '推荐点击率提升42% · GMV提升18%', desc: '为头部电商平台构建覆盖"搜-推-逛"全链路的智能推荐与搜索系统，融合用户行为序列建模、多模态商品理解、实时特征计算。日均支持10亿+推理请求。', metrics: ['42%点击提升', '18%GMV提升', '10亿+推理/日'] },
+  { industry: '能源', cat: 'energy', title: '某能源集团设备预测性维护AI平台', subtitle: '故障预警准确率93% · 非计划停机减少55%', desc: '为能源集团构建基于AI的设备预测性维护平台，接入10+电站50万+传感器数据，利用时序分析、异常检测、寿命预测模型对风机、汽轮机等关键设备进行预测性维护。', metrics: ['93%预警准确', '55%停机减少', '35%维护降低'] },
+  { industry: '通信', cat: 'telecom', title: '算力云管控平台 — 筑基AI新生态', subtitle: '异构纳管英伟达/昇腾 · 跨域集群统一调度', desc: '基于Kubernetes构建全栈式算力云管控平台，实现英伟达、华为昇腾等异构GPU/NPU统一纳管，支持vGPU/vNPU虚拟化切分、跨域跨集群智能调度、配置模板化一键拉起、网关精准计费。', metrics: ['异构纳管', 'GPU虚拟化', '精准计费'] },
+
+  // ===== 实战项目案例（PPT总结） =====
+  { industry: '消费零售', cat: 'retail', title: '肯德基AI智能点餐助手"小K"', subtitle: '基于阿里千问大模型 · APP与微信已上线', desc: '为肯德基APP打造AI智能点餐助手"小K"，基于阿里千问大模型实现语音/文字点餐、套餐推荐、多轮对话。采用意图识别+RAG知识问答+Agent工具调用架构，配套全链路运营监控体系。', metrics: ['APP+微信上线', '语音/文字点餐', '全链路监控'] },
+  { industry: '数字政府', cat: 'government', title: '上海铁路局AI智能培训与公文写作平台', subtitle: '三层智能架构 · 公文创作智能体', desc: '为上海铁路局构建SaaS/PaaS/IaaS三层智能培训平台，涵盖AI知识库、智能问答、试题生成、人才画像等能力。公文写作分三期建设，从公文创作智能体到全办公智能体，统一AI智能体门户入口。', metrics: ['三层架构', '公文智能体', 'AI门户'] },
+  { industry: '智慧交通', cat: 'transportation', title: '东方航空AI全景规划与智能行程助手', subtitle: '行程规划Agent已上线 · 下一代APP招投标中', desc: '为东方航空构建AI全景规划，涵盖AI Stack轻量化平台、百炼平台、行程规划Agent（已上线）、下一代APP（8大意图+6智能体）、订票智能体、纯语音实时对话模式。技术栈基于K8s、PolarDB、异构GPU。', metrics: ['行程Agent上线', '8意图+6智能体', '异构GPU架构'] },
+  { industry: '数字政府', cat: 'government', title: '杨浦区AI公共服务平台（十大应用场景）', subtitle: '通用能力+行业场景+统一入口', desc: '为上海杨浦区大数据局打造AI公共服务平台，覆盖公文写作、议事协商、要情专报、智慧督办、智慧仲裁、法律援助等10大应用场景。采用"通用能力+行业场景+统一入口"架构模式，赋能政务全场景。', metrics: ['10大场景', '通用能力平台', '统一入口'] },
 ];
 
 const capabilities = [
@@ -720,6 +741,9 @@ const caseImgs = {
   realestate: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400&h=200&fit=crop',
   catering: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&h=200&fit=crop',
   legal: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?w=400&h=200&fit=crop',
+  transportation: 'https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=400&h=200&fit=crop',
+  telecom: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=200&fit=crop',
+  energy: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=400&h=200&fit=crop',
 };
 
 // ===== Render Industry Categories =====
