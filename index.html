@@ -538,13 +538,14 @@
             <div><div class="contact-item-label">坐标</div><div class="contact-item-value">中国 · 上海</div></div>
           </div>
         </div>
-        <form class="contact-form" id="contactForm" data-netlify="true" name="contact" onsubmit="handleSubmit(event)">
-          <input type="hidden" name="form-name" value="contact">
+        <form class="contact-form" id="contactForm" action="https://api.web3forms.com/submit" method="POST" onsubmit="return handleSubmit(event)">
+          <input type="hidden" name="access_key" value="7a2c0643-f8cd-427e-81a9-5657c78dee32">
           <input type="text" name="姓名" placeholder="您的姓名" required>
           <input type="text" name="联系方式" placeholder="手机 / 微信" required>
           <input type="email" name="邮箱" placeholder="邮箱地址">
           <input type="text" name="公司" placeholder="公司名称">
           <textarea name="需求" placeholder="请描述您的需求或想法，我们会尽快与您联系..." required></textarea>
+          <input type="checkbox" name="botcheck" class="hidden" style="display:none;">
           <button type="submit" class="btn-primary">发送消息</button>
         </form>
       </div>
@@ -811,13 +812,47 @@ function handleSubmit(e) {
   e.preventDefault();
   const btn = e.target.querySelector('button');
   const orig = btn.textContent;
-  btn.textContent = '✅ 已收到，我们会尽快联系您';
-  btn.style.opacity = '0.7';
-  setTimeout(() => {
-    btn.textContent = orig;
-    btn.style.opacity = '1';
-    e.target.reset();
-  }, 3000);
+  btn.textContent = '⏳ 提交中...';
+  btn.disabled = true;
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData);
+
+  fetch('https://api.web3forms.com/submit', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  })
+  .then(res => res.json())
+  .then(result => {
+    if (result.success) {
+      btn.textContent = '✅ 已收到，我们会尽快联系您！';
+      btn.style.background = '#22c55e';
+      e.target.reset();
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 4000);
+    } else {
+      btn.textContent = '❌ 提交失败，请重试';
+      btn.style.background = '#ef4444';
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.style.background = '';
+        btn.disabled = false;
+      }, 3000);
+    }
+  })
+  .catch(() => {
+    btn.textContent = '❌ 网络错误，请稍后重试';
+    btn.style.background = '#ef4444';
+    setTimeout(() => {
+      btn.textContent = orig;
+      btn.style.background = '';
+      btn.disabled = false;
+    }, 3000);
+  });
 }
 </script>
 </body>
