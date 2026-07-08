@@ -349,39 +349,6 @@
   .step h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--text-primary); }
   .step p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
 
-  /* ===== Cooperation Page ===== */
-  .page-cooperation { background: var(--bg-primary); }
-  .coop-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
-  .coop-card {
-    padding: 32px; border-radius: 12px; text-align: center;
-    background: var(--bg-card); border: 1px solid var(--border); transition: all 0.25s;
-  }
-  .coop-card.featured {
-    border-color: var(--accent); position: relative;
-    background: var(--accent-soft);
-  }
-  .coop-card.featured::after {
-    content: '推荐'; position: absolute; top: 12px; right: 12px;
-    padding: 3px 10px; border-radius: 4px; font-size: 11px; font-weight: 600;
-    background: var(--accent); color: #fff;
-  }
-  .coop-card h3 { font-size: 17px; font-weight: 600; margin-bottom: 4px; color: var(--text-primary); }
-  .coop-price { font-size: 28px; font-weight: 700; margin: 16px 0; color: var(--text-primary); }
-  .coop-price small { font-size: 12px; font-weight: 400; color: var(--text-muted); }
-  .coop-card ul { list-style: none; text-align: left; margin: 20px 0; }
-  .coop-card li { padding: 6px 0; font-size: 13px; color: var(--text-secondary); }
-  .coop-card li::before { content: '✓ '; color: var(--accent); font-weight: 600; }
-  .coop-btn {
-    display: inline-block; padding: 10px 28px; border-radius: 8px;
-    background: transparent; border: 1px solid var(--border);
-    color: var(--text-primary); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s;
-  }
-  .coop-btn:hover { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
-  .coop-card.featured .coop-btn {
-    background: var(--btn-primary-bg); color: var(--btn-primary-text); border: none; font-weight: 600;
-  }
-  .coop-card.featured .coop-btn:hover { opacity: 0.9; }
-
   /* ===== Contact Page ===== */
   .page-contact { background: var(--bg-secondary); }
   .contact-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
@@ -420,7 +387,7 @@
     .section-subtitle { font-size: 14px; margin-bottom: 36px; }
     .hero-stats { gap: 24px; }
     .hero-stat { min-width: 100px; }
-    .industry-grid, .case-grid, .caps-grid, .coop-grid { grid-template-columns: 1fr; gap: 14px; }
+    .industry-grid, .case-grid, .caps-grid { grid-template-columns: 1fr; gap: 14px; }
     .industry-card, .case-card { padding: 24px; }
     .contact-wrap { grid-template-columns: 1fr; gap: 32px; }
     .process-steps::before { display: none; }
@@ -455,8 +422,6 @@
     .case-metric { font-size: 11px; padding: 3px 8px; }
     .cap-card { padding: 24px 16px; }
     .cap-card-img { width: calc(100% + 32px); margin: -24px -16px 16px -16px; height: 120px; }
-    .coop-card { padding: 24px 20px; }
-    .coop-price { font-size: 24px; }
     .contact-item { gap: 12px; }
     .contact-form input, .contact-form textarea { font-size: 16px; }
     .contact-form button { width: 100%; }
@@ -478,7 +443,6 @@
       <li><a data-page="industries" onclick="switchPage('industries')">行业场景</a></li>
       <li><a data-page="cases" onclick="switchPage('cases')">落地案例</a></li>
       <li><a data-page="capabilities" onclick="switchPage('capabilities')">团队能力</a></li>
-      <li><a data-page="cooperation" onclick="switchPage('cooperation')">合作模式</a></li>
       <li><a data-page="contact" class="nav-cta" onclick="switchPage('contact')">联系我们</a></li>
     </ul>
   </div>
@@ -547,17 +511,6 @@
           <div class="step"><div class="step-icon"><svg viewBox="0 0 32 32" fill="none"><path d="M16 6C11 6 6 8.5 4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 14H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 14C4 14 7 10 9 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 26C21 26 26 23.5 28 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M28 18H23" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M28 18C28 18 25 22 23 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="16" r="2" class="fill-accent"/></svg></div><h4>持续运营</h4><p>模型迭代优化<br>7×12h 响应</p></div>
         </div>
       </div>
-    </div>
-  </section>
-</div>
-
-<!-- ===== PAGE: Cooperation ===== -->
-<div class="page page-cooperation" id="page-cooperation">
-  <section>
-    <div class="section-inner">
-      <h2 class="section-title">合作模式</h2>
-      <p class="section-subtitle">灵活的合作方式，适配不同阶段的企业 AI 需求</p>
-      <div class="coop-grid" id="coopGrid"></div>
     </div>
   </section>
 </div>
@@ -712,12 +665,6 @@ const capabilities = [
   { num: '06', title: 'AI产品设计与体验', desc: '以用户为中心的AI产品设计，包括交互原型、Prompt工程、对话设计、可视化等，让AI好用易用。' },
 ];
 
-const coopModels = [
-  { name: '项目制交付', price: '按需报价', featured: false, features: ['需求明确的全流程交付', '2-8周快速交付周期', '含部署与验收标准', '3个月免费维保', '源码/模型可交付'] },
-  { name: '长期技术伙伴', price: '月付制', featured: true, features: ['月度AI技术支持', '不限次需求评估', '优先响应（4h内）', '模型持续迭代优化', '年度战略复盘'] },
-  { name: 'AI能力共建', price: '利润分成', featured: false, features: ['联合产品/解决方案开发', '技术入股模式可选', '知识产权共商共享', '市场渠道资源共享', '长期利益绑定'] },
-];
-
 // ===== Page Switching =====
 function switchPage(pageId) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
@@ -852,11 +799,6 @@ document.getElementById('capsGrid').innerHTML = capabilities.map(cap => {
   const imgHtml = imgUrl ? `<div class="cap-card-img"><img src="${imgUrl}" alt="${cap.title}" loading="lazy"></div>` : '';
   return `<div class="cap-card">${imgHtml}<div class="cap-number">${cap.num}</div><h3>${cap.title}</h3><p>${cap.desc}</p></div>`;
 }).join('');
-
-// ===== Render Cooperation =====
-document.getElementById('coopGrid').innerHTML = coopModels.map(m =>
-  `<div class="coop-card ${m.featured ? 'featured' : ''}"><h3>${m.name}</h3><div class="coop-price">${m.price} <small>/${m.name === '项目制交付' ? '项目' : '月'}</small></div><ul>${m.features.map(f => `<li>${f}</li>`).join('')}</ul><button class="coop-btn" onclick="switchPage('contact')">立即咨询</button></div>`
-).join('');
 
 // ===== Mobile Nav =====
 document.getElementById('navToggle').addEventListener('click', () => {
