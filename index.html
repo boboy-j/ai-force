@@ -302,6 +302,16 @@
     border-radius: 12px; transition: all 0.25s;
   }
   .cap-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 8px 24px var(--shadow); }
+  .cap-card-img {
+    width: calc(100% + 48px); margin: -36px -24px 20px -24px;
+    height: 140px; overflow: hidden; background: var(--bg-secondary);
+    border-radius: 12px 12px 0 0;
+  }
+  .cap-card-img img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transition: transform 0.4s;
+  }
+  .cap-card:hover .cap-card-img img { transform: scale(1.05); }
   .cap-number {
     width: 40px; height: 40px; line-height: 40px; border-radius: 8px;
     background: var(--accent-soft); color: var(--accent);
@@ -318,9 +328,23 @@
     height: 2px; background: var(--accent); opacity: 0.15;
   }
   .step { text-align: center; flex: 1; min-width: 100px; max-width: 160px; position: relative; padding: 0 12px; }
-  .step-dot {
-    width: 10px; height: 10px; border-radius: 50%; margin: 0 auto 12px;
-    background: var(--accent); opacity: 0.6; position: relative; z-index: 2;
+  .step-icon {
+    width: 36px; height: 36px; margin: 0 auto 12px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; z-index: 2;
+  }
+  .step-icon svg {
+    width: 36px; height: 36px; display: block;
+    filter: drop-shadow(0 2px 4px var(--shadow));
+  }
+  .step-icon svg path, .step-icon svg circle, .step-icon svg rect {
+    stroke: var(--accent);
+    fill: none;
+    stroke-width: 1.8;
+  }
+  .step-icon svg .fill-accent {
+    fill: var(--accent);
+    stroke: none;
   }
   .step h4 { font-size: 13px; font-weight: 600; margin-bottom: 4px; color: var(--text-primary); }
   .step p { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
@@ -402,7 +426,8 @@
     .process-steps::before { display: none; }
     .process-steps { flex-direction: column; align-items: stretch; gap: 16px; }
     .step { max-width: 100%; display: flex; gap: 14px; text-align: left; align-items: flex-start; padding: 0; }
-    .step-dot { margin: 4px 0 0; flex-shrink: 0; }
+    .step-icon { margin: 4px 0 0; flex-shrink: 0; width: 28px; height: 28px; }
+    .step-icon svg { width: 28px; height: 28px; }
     .step h4 { margin-bottom: 2px; }
     .step p br { display: none; }
     .hero-brand-large { font-size: 30px; }
@@ -429,6 +454,7 @@
     .case-metrics { gap: 6px; }
     .case-metric { font-size: 11px; padding: 3px 8px; }
     .cap-card { padding: 24px 16px; }
+    .cap-card-img { width: calc(100% + 32px); margin: -24px -16px 16px -16px; height: 120px; }
     .coop-card { padding: 24px 20px; }
     .coop-price { font-size: 24px; }
     .contact-item { gap: 12px; }
@@ -514,11 +540,11 @@
       <div class="process">
         <h3>落地五步法</h3>
         <div class="process-steps">
-          <div class="step"><div class="step-dot"></div><h4>需求诊断</h4><p>业务场景梳理<br>AI可行性评估</p></div>
-          <div class="step"><div class="step-dot"></div><h4>方案设计</h4><p>技术架构规划<br>ROI 测算</p></div>
-          <div class="step"><div class="step-dot"></div><h4>MVP 开发</h4><p>快速原型验证<br>2-4周出成果</p></div>
-          <div class="step"><div class="step-dot"></div><h4>交付部署</h4><p>生产环境上线<br>效果调优</p></div>
-          <div class="step"><div class="step-dot"></div><h4>持续运营</h4><p>模型迭代优化<br>7×12h 响应</p></div>
+          <div class="step"><div class="step-icon"><svg viewBox="0 0 32 32" fill="none"><circle cx="14" cy="14" r="9" stroke="currentColor" stroke-width="1.8"/><path d="M20 20L29 29" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="14" cy="14" r="3" class="fill-accent"/></svg></div><h4>需求诊断</h4><p>业务场景梳理<br>AI可行性评估</p></div>
+          <div class="step"><div class="step-icon"><svg viewBox="0 0 32 32" fill="none"><rect x="4" y="7" width="24" height="18" rx="3" stroke="currentColor" stroke-width="1.8"/><path d="M4 13H28" stroke="currentColor" stroke-width="1.8"/><circle cx="8" cy="10" r="0.8" class="fill-accent"/><circle cx="11" cy="10" r="0.8" class="fill-accent"/><path d="M10 20L14 17L17 21L22 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h4>方案设计</h4><p>技术架构规划<br>ROI 测算</p></div>
+          <div class="step"><div class="step-icon"><svg viewBox="0 0 32 32" fill="none"><path d="M18 4L8 18H15L14 28L24 14H17L18 4Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg></div><h4>MVP 开发</h4><p>快速原型验证<br>2-4周出成果</p></div>
+          <div class="step"><div class="step-icon"><svg viewBox="0 0 32 32" fill="none"><path d="M4 20L12 12L16 18L22 8L28 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 8H28V14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><circle cx="12" cy="12" r="1.5" class="fill-accent"/><circle cx="16" cy="18" r="1.5" class="fill-accent"/><circle cx="22" cy="8" r="1.5" class="fill-accent"/><circle cx="28" cy="14" r="1.5" class="fill-accent"/></svg></div><h4>交付部署</h4><p>生产环境上线<br>效果调优</p></div>
+          <div class="step"><div class="step-icon"><svg viewBox="0 0 32 32" fill="none"><path d="M16 6C11 6 6 8.5 4 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 14H9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M4 14C4 14 7 10 9 14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M16 26C21 26 26 23.5 28 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M28 18H23" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M28 18C28 18 25 22 23 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="16" cy="16" r="2" class="fill-accent"/></svg></div><h4>持续运营</h4><p>模型迭代优化<br>7×12h 响应</p></div>
         </div>
       </div>
     </div>
@@ -745,6 +771,14 @@ const caseImgs = {
   telecom: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=400&h=200&fit=crop',
   energy: 'https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=400&h=200&fit=crop',
 };
+const capImgs = {
+  '01': 'https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=200&fit=crop',
+  '02': 'https://images.unsplash.com/photo-1677442136019-21780ecad995?w=400&h=200&fit=crop',
+  '03': 'https://images.unsplash.com/photo-1561736778-92e52a7769ef?w=400&h=200&fit=crop',
+  '04': 'https://images.unsplash.com/photo-1526378800651-c32d170fe6f8?w=400&h=200&fit=crop',
+  '05': 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=200&fit=crop',
+  '06': 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=400&h=200&fit=crop',
+};
 
 // ===== Render Industry Categories =====
 const catContainer = document.getElementById('industryCategories');
@@ -813,9 +847,11 @@ function renderCases() {
 renderCases();
 
 // ===== Render Capabilities =====
-document.getElementById('capsGrid').innerHTML = capabilities.map(cap =>
-  `<div class="cap-card"><div class="cap-number">${cap.num}</div><h3>${cap.title}</h3><p>${cap.desc}</p></div>`
-).join('');
+document.getElementById('capsGrid').innerHTML = capabilities.map(cap => {
+  const imgUrl = capImgs[cap.num] || '';
+  const imgHtml = imgUrl ? `<div class="cap-card-img"><img src="${imgUrl}" alt="${cap.title}" loading="lazy"></div>` : '';
+  return `<div class="cap-card">${imgHtml}<div class="cap-number">${cap.num}</div><h3>${cap.title}</h3><p>${cap.desc}</p></div>`;
+}).join('');
 
 // ===== Render Cooperation =====
 document.getElementById('coopGrid').innerHTML = coopModels.map(m =>
